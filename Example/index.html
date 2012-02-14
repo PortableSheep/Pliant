@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Validation Examples</title>
+    <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="..\jquery.microval.min.js"></script>
+    <style type="text/css">
+        .mv-element-error {
+            color: red;
+            font-weight: bold;
+        }
+        .mv-input-error {
+            border: 1px solid red;
+            background-color: #ffcccc;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function() {
+            var datePick = $('#date');
+            var val = $('#signupForm').microval({
+                parseMarkup: true,
+                rules: {
+                    dateformat: {
+                        message: 'Invalid Date',
+                        validate: function(o) {
+                            return (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/i.test($(this).val()));
+                        }
+                    }
+                },
+                fields: [
+                    {
+                        field: $('#password'),
+                        rules: {
+                            required:{},
+                            length: {
+                                min: 5,
+                                max: 10
+                            }
+                        }
+                    },
+                    {
+                        field: $('#FirstName'),
+                        rules: {
+                            required:{
+                                message: 'Required Name!',
+                                container: $('#firstNameError')
+                            },
+                            length: {
+                                min: 10,
+                                max: 20
+                            }
+                        }
+                    },
+                    {
+                        field: $('#username'),
+                        rules: {
+                            required: {}
+                        }
+                    },
+                    {
+                        field: datePick,
+                        rules: {
+                            required: {},
+                            dateformat: {}
+                        }
+                    }
+                ],
+                focusFirstInvalidField: true,
+                reconcileFieldOrder: true
+            });
+            datePick.datepicker({
+                showOn: "button",
+                buttonImage: "calendar.gif",
+			    buttonImageOnly: true
+            });
+            setTimeout(function() {
+                var test = $('#test');
+                test.html('<label for="dynamicField">Dynamic Field</label><!-- validate:required --><input id="dynamicField" name="dynamicField" type="text" />');
+                val.AddMarkupRules();
+            }, 3000);
+        });
+    </script>
+</head>
+<body>
+    <form class="cmxform" id="signupForm" method="get" action="">
+        <p>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text">
+        </p>
+        <p>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" />
+        </p>
+        <p>
+            <label for="date">Date</label>
+            <input id="date" name="date" type="text" />
+        </p>
+        <p>
+            <label for="confirm_password">Confirm password</label>
+            <!-- validate:required -->
+            <!-- validate:length[min:2|max:10|message:'Between 2 and 10 characters'] -->
+            <input id="confirm_password" name="confirm_password" type="password" />
+        </p>
+        <p>
+            <div id="firstNameError"></div><label for="FirstName">First Name (Uses container for error!)</label>
+            <input id="FirstName" name="FirstName" type="text" />
+        </p>
+        <p id="test">
+            In 3 seconds, this will be replaced with a field and some HTML rules.
+        </p>
+        <input class="submit" type="submit" value="Submit"/>
+    </form>
+</body>
+</html>
