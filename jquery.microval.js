@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v1.8
+ * MicroVal jQuery plugin v2.3
  * http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
@@ -9,7 +9,9 @@
         var opt = $.extend(true, {
             rules: {
                 required: {
-                    validate: function() { return (this.is('[type=checkbox],[type=radio]') ? this.is(':checked') : ($.trim(this.val()).length > 0)); },
+                    validate: function() {
+                        return (this.is('[type=checkbox],[type=radio]') ? this.is(':checked') : ($.trim(this.val()).length > 0));
+                    },
                     message: 'Required'
                 },
                 length: {
@@ -26,11 +28,15 @@
                     message: 'Invalid length'
                 },
                 numeric: {
-                    validate: function() { return /^\d+$/i.test(this.val()); },
+                    validate: function() {
+                        return /^\d+$/i.test(this.val());
+                    },
                     message: 'Numeric only'
                 },
                 email: {
-                    validate: function() { return /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/i.test(this.val()); },
+                    validate: function() {
+                        return /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/i.test(this.val());
+                    },
                     message: 'Invalid email'
                 }
             },
@@ -50,11 +56,65 @@
             messageElementClass: 'mv-element-error', //The CSS class to apply to the validation message DOM element.
             messageWrapClass: 'mv-wrap-error', //The CSS class to apply to the validation message wrapper DOM element.
             inputClass: 'mv-input-error', //The CSS class to apply to the invalid field element.
-            onFieldValidate: null, //The field validate event. Listeners will receive the microval instance as the "this" context, with the first param being the field being validated, and the second being a bool indicating the validity.
-            onFormValidate: null, //The form validate event. Listeners will receive the microval instance as the "this" context, with the first param being a collection of the fields validated, and the second being a bool indicating the overall validity of the form.
-            onMessagePlacement: null, //The message placement event. Listeners will receive the message being placed in the DOM, and are responsible for inserting it wherever they require.
-            onInvalidFieldFocus: null //The invalid field focus event. Listerns will receive the field in question as the "this" context. This only fires if focusFirstInvalidField is true.
+            onFieldAdded: null, //Fired when a field has been added. The 'this' context is the field, and the first param is the field object.
+            onFieldValidate: null, //Fired when a field is validated on change. The 'this' context is the plugin instance, the first param is the field, and the second is a bool indicating the validity.
+            onFormValidate: null, //Fired when the form is validated. The 'this' context is the plugin instance, the first param is the fields collection, and the second is a bool indicating the validity.
+            onMessagePlacement: null, //Fired when rule messages are placed. The first param is the message being placed in the DOM, and you're responsible for inserting it.
+            onInvalidFieldFocus: null //Fired when an invalid field is auto focused when focusFirstInvalidField is enabled. The 'this' context is the field being focused.
         }, o), _$this = $(this), _self = this, _invalidCount = 0, _fields = [],
+        _trigger = function(event, context, data) {
+            if (opt[event]) {
+                if (opt[event] instanceof Array) {
+                    for(var i in opt[event]) {
+                        opt[event][i].apply(context, data||[]);
+                    }
+                } else {
+                    opt[event].apply(context, data||[]);
+                }
+            }
+        },
+        _refreshState = function() {
+            var invalidFocused = false;
+            _invalidCount = 0;
+            for(var i in _fields) {
+                if (_fields[i].isEnabled) {
+                    var isValid = true;
+                    for(var r in _fields[i].rules) {
+                        var rule = _fields[i].rules[r];
+                        if (rule.isEnabled === false || (opt.haltOnFirstInvalidRule && !Boolean(isValid))) {
+                            rule.message.hide();
+                            continue;
+                        }
+                        isValid &= (rule.isValid !== false);
+                        if (rule.isValid !== false) {
+                            _fields[i].rules[r].message.hide();
+                        } else {
+                            _fields[i].rules[r].message.show();
+                        }
+                    }
+                    if ((_fields[i].isValid = Boolean(isValid)) === false) {
+                        _invalidCount++;
+                        if (_fields[i].field.is(':input')) {
+                            _fields[i].field.addClass(opt.inputClass);
+                            if (opt.focusFirstInvalidField && !invalidFocused) {
+                                _trigger('onInvalidFieldFocus', _fields[i].field);
+                                _fields[i].field.focus();
+                                invalidFocused = true;
+                            }
+                        }
+                    } else {
+                        if (_fields[i].field.is(':input')) {
+                            _fields[i].field.removeClass(opt.inputClass);
+                        }
+                    }
+                }
+            }
+            if (opt.messageContainer && _invalidCount > 0) {
+                opt.messageContainer.show();
+            } else if (opt.messageContainer && _invalidCount <= 0) {
+                opt.messageContainer.hide();
+            }
+        },
         _prepRules = function(obj) {
             for(var i in obj.rules) {
                 var rule = obj.rules[i];
@@ -65,7 +125,7 @@
                     }
                     rule.message.hide();
                     if (opt.onMessagePlacement) {
-                        opt.onMessagePlacement.call(obj.field, rule.message);
+                        _trigger('onMessagePlacement', obj.field, rule.message);
                     } else if (rule.container) {
                         $(rule.container).append(rule.message);
                     } else if (opt.messageContainer) {
@@ -79,10 +139,14 @@
         _fieldObject = function(obj) {
             var fInst = this;
             this.field = obj.field, this.rules = obj.rules, this.isValid = true, this.isEnabled = true;
-            _prepRules(obj);
-            if (opt.validateOnFieldChange) {
-                this.field.bind('change', function(){ fInst.Validate(); });
+            if (obj.validateOnChange || opt.validateOnFieldChange && obj.validateOnChange !== false) {
+                this.field.bind('change', function(){
+                    fInst.Validate();
+                    _refreshState();
+                });
             }
+            _prepRules(obj);
+            _trigger('onFieldAdded', this.field, this);
         },
         _addField = function(fieldObj) {
             if (fieldObj instanceof Array) {
@@ -99,9 +163,7 @@
             }
         },
         _getFieldObjectIndex = function(fieldObj) {
-            if (!(fieldObj instanceof _fieldObject) && fieldObj.field === undefined) {
-                fieldObj = { field: fieldObj };
-            }
+            fieldObj = (!(fieldObj instanceof _fieldObject) && fieldObj.field === undefined) ? { field: fieldObj } : fieldObj;
             for(var i in _fields) {
                 if (_fields[i].field == fieldObj.field || _fields[i].field.attr('id') == fieldObj.field.attr('id')) {
                     return i;
@@ -138,32 +200,39 @@
         _validateRule = this.ValidateRule = function(rule, obj) {
             return (opt.rules[rule]) ? opt.rules[rule].validate(obj) : false;
         },
-        _resetState = this.ResetState = function() {
-            for (var i in _fields) {
-                if (!_fields[i].isValid) {
-                    for(var m in _fields[i].rules) {
-                        _fields[i].rules[m].message.hide();
-                    }
-                    _fields[i].field.removeClass(opt.inputClass);
-                }
-                _fields[i].isValid = true;
-            }
-            _invalidCount = 0;
-            if (opt.messageContainer) {
-                opt.messageContainer.hide();
-            }
-        },
-        _focusInvalidField = function() {
-            if (opt.focusFirstInvalidField) {
+        _resetState = this.ResetState = function(field) {
+            if (field == undefined) {
                 for (var i in _fields) {
-                    if (!_fields[i].isValid) {
-                        if (opt.onInvalidFieldFocus) {
-                            opt.onInvalidFieldFocus.call(_fields[i].field);
-                        } else {
-                            _fields[i].field.focus();
-                        }
-                        break;
+                    _fields[i].isValid = true;
+                    for(var m in _fields[i].rules) {
+                        _fields[i].rules[m].isValid = true;
                     }
+                }
+            } else {
+                var index = _getFieldObjectIndex(field);
+                if (index > -1) {
+                    _fields[index].isValid = true;
+                    for(var r in _fields[index].rules) {
+                        _fields[index].rules[r].isValid = true;
+                    }
+                }
+            }
+            _refreshState();
+        },
+        _setState = this.SetState = function(obj) {
+            if (obj instanceof Array) {
+                for(var i in obj) {
+                    _setState(obj[i]);
+                }
+            } else {
+                var index = _getFieldObjectIndex(obj.field);
+                if (index > -1) {
+                    for(var rName in obj.rules) {
+                        if (_fields[index].rules[rName]) {
+                            _fields[index].rules[rName].isValid = obj.rules[rName];
+                        }
+                    }
+                    _refreshState();
                 }
             }
         },
@@ -184,7 +253,7 @@
                         var name = match[1], options = (match[2]) ? match[2].split(/\s*\|\s*/) : null;
                         if (opt.rules[name]) {
                             hasRules = true;
-                            var ruleObj = { };
+                            var ruleObj = {};
                             for(var index in options) {
                                 var parsed = options[index].split(':', 2);
                                 if (parsed) {
@@ -195,6 +264,9 @@
                                             if (tmp.length) {
                                                 ruleObj[key] = tmp;
                                             }
+                                        break;
+                                        case 'isValid':
+                                            ruleObj[key] = (val == 'true');
                                         break;
                                         default:
                                             ruleObj[key] = val;
@@ -212,47 +284,34 @@
             });
         };
         _fieldObject.prototype.Validate = function() {
-            if (this.isEnabled) {
-                var prevValid = this.isValid;
-                this.isValid = true;
+            this.isValid = true;
+            if (this.isEnabled && !(opt.ignoreHidden && !this.field.is(':visible'))) {
                 for(var i in this.rules) {
                     var rule = this.rules[i];
-                    if (rule.isEnabled || rule.isEnabled == undefined) {
-                        if (opt.haltOnFirstInvalidRule && this.isValid) {
-                            var ret = (rule.validate) ? Boolean(rule.validate.call(this.field, rule)) : Boolean(opt.rules[i].validate.call(this.field, rule));
-                            if (ret) {
-                                rule.message.hide();
-                            } else {
-                                rule.message.show();
-                            }
-                            this.isValid &= ret;
-                        } else {
-                            rule.message.hide();
+                    if (rule.isEnabled !== false) {
+                        if (opt.haltOnFirstInvalidRule && !this.isValid) {
+                            break;
                         }
+                        this.isValid &= rule.isValid = (rule.validate) ? Boolean(rule.validate.call(this.field, rule)) : Boolean(opt.rules[i].validate.call(this.field, rule));
                     }
                 }
-                if (this.isValid) {
-                    this.field.removeClass(opt.inputClass);
-                } else {
-                    this.field.addClass(opt.inputClass);
-                }
-                if (this.isValid && !prevValid && _invalidCount > 0) {
-                    _invalidCount--;
-                } else if (prevValid && !this.isValid) {
-                    _invalidCount++;
-                }
                 if (opt.validateOnFieldChange && opt.onFieldValidate) {
-                    opt.onFieldValidate.call(_self, this, this.isValid);
+                    _trigger('onFieldValidate', _self, [this, this.isValid]);
                 }
-                if (opt.messageContainer && _invalidCount > 0) {
-                    opt.messageContainer.show();
-                } else if (opt.messageContainer && _invalidCount <= 0) {
-                    opt.messageContainer.hide();
-                }
-                return this.isValid;
             }
-            return true;
+            return this.isValid;
         };
+        this.Subscribe = function(event, handler) {
+            if (handler instanceof Function){
+                if (opt[event] instanceof Array) {
+                    opt[event].push(handler);
+                } else {
+                    opt[event] = (opt[event] ? [opt[event], handler] : [handler]);
+                }
+                return this;
+            }
+            return false;
+        },
         this.AddField = function(fieldObj) {
             if (fieldObj) {
                 var i = _getFieldObjectIndex(fieldObj);
@@ -267,7 +326,31 @@
                 } else if (i == -1) {
                     _addField(fieldObj);
                 }
+                _refreshState();
             }
+        },
+        this.GetFieldRules = function(includeHidden) {
+            var invalid = [];
+            for(var i in _fields) {
+                if (_fields[i].isEnabled) {
+                    if (_fields[i].field.is(':visible') || includeHidden) {
+                        var rules = [];
+                        for(var r in _fields[i].rules) {
+                            if (_fields[i].rules[r].isEnabled !== false) {
+                                var props = [];
+                                for(var p in _fields[i].rules[r]) {
+                                    if (p != 'validate' && p != 'message' && p != 'isValid' && p != 'isEnabled') {
+                                        props.push({ key: p, value: _fields[i].rules[r][p] });
+                                    }
+                                }
+                                rules.push({ name: r, properties: props });
+                            }
+                        }
+                        invalid.push({ id: _fields[i].field.attr('id'), rules: rules});
+                    }
+                }
+            }
+            return invalid;
         },
         this.GetInvalidCount = function() { return _invalidCount; },
         this.TotalFields = function() { return _fields.length; },
@@ -279,23 +362,21 @@
             }
             _fields = [];
             _invalidCount = 0;
+            _refreshState();
         },
         this.Validate = function() {
             var isValid = true;
             for(var i in _fields) {
-                if (opt.ignoreHidden && !_fields[i].field.is(':visible')) { _fields[i].isValid = true; continue; }
                 isValid &= _fields[i].Validate();
             }
+            _refreshState();
             isValid = Boolean(isValid);
             if (!isValid) {
-                _focusInvalidField();
                 if (opt.messageContainer) {
                     opt.messageContainer.show();
                 }
             }
-            if (opt.onFormValidate) {
-                opt.onFormValidate.call(this, _fields, isValid);
-            }
+            _trigger('onFormValidate', this, [_fields, isValid]);
             return isValid;
         };
         if (opt.validateSubmit && _$this.is('form')) {
@@ -312,6 +393,7 @@
         if (opt.hideMessageContainerOnLoad && opt.messageContainer) {
             opt.messageContainer.hide();
         }
+        _refreshState();
         return this;
     };
 })(jQuery);
