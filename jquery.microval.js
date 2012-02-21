@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v2.4
+ * MicroVal jQuery plugin v2.5
  * http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
@@ -41,6 +41,7 @@
                 }
             },
             fields: [], //Collection of field objects to add for validation on load.
+            appendRulesToFieldClass: false, //If true, the fields class attribute will have rule names appended to it.
             reconcileFieldOrder: false, //If true, fields are added in the position they appear in the form, instead of the order they're added.
             haltOnFirstInvalidRule: true, //If true, validation is halted on the first invalid rule for the field.
             hideMessageContainerOnLoad: true, //If true, the message container is hidden on load, as long as the messageContainer option is supplied.
@@ -133,6 +134,9 @@
                     } else {
                         obj.field.after(rule.message);
                     }
+                    if (opt.appendRulesToFieldClass) {
+                        obj.field.addClass(i);
+                    }
                 }
             }
         },
@@ -176,6 +180,9 @@
             if (i > -1) {
                 for (var x in _fields[i].rules) {
                     _fields[i].rules[x].message.remove();
+                    if (opt.appendRulesToFieldClass) {
+                        _fields[i].field.removeClass(x);
+                    }
                 }
                 _fields.splice(i, 1);
             }
@@ -192,6 +199,13 @@
                 for(var name in _fields[i].rules) {
                     if (name == rule) {
                         _fields[i].rules[name].isEnabled = enabled;
+                        if (opt.appendRulesToFieldClass) {
+                            if (enabled) {
+                                _fields[i].field.addClass(name);
+                            } else {
+                                _fields[i].field.removeClass(name);
+                            }
+                        }
                         break;
                     }
                 }
@@ -362,6 +376,9 @@
             for(var i in _fields) {
                 for(var x in _fields[i].rules) {
                     _fields[i].rules[x].message.remove();
+                    if (opt.appendRulesToFieldClass) {
+                        _fields[i].field.removeClass(x);
+                    }
                 }
             }
             _fields = [];
