@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v2.3
+ * MicroVal jQuery plugin v2.4
  * http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
@@ -334,19 +334,23 @@
             for(var i in _fields) {
                 if (_fields[i].isEnabled) {
                     if (_fields[i].field.is(':visible') || includeHidden) {
-                        var rules = [];
+                        var invRules = [];
                         for(var r in _fields[i].rules) {
                             if (_fields[i].rules[r].isEnabled !== false) {
                                 var props = [];
                                 for(var p in _fields[i].rules[r]) {
                                     if (p != 'validate' && p != 'message' && p != 'isValid' && p != 'isEnabled') {
-                                        props.push({ key: p, value: _fields[i].rules[r][p] });
+                                        var val = _fields[i].rules[r][p];
+                                        if (val instanceof jQuery) {
+                                            val = val.attr('id');
+                                        }
+                                        props.push({ key: p, value: val });
                                     }
                                 }
-                                rules.push({ name: r, properties: props });
+                                invRules.push({ name: r, properties: props });
                             }
                         }
-                        invalid.push({ id: _fields[i].field.attr('id'), rules: rules});
+                        invalid.push({ id: _fields[i].field.attr('id'), rules: invRules});
                     }
                 }
             }
