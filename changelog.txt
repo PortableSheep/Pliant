@@ -1,0 +1,16 @@
+2.6:
+ - Added ability to define submit selector (option: validateSubmitSelector) and event (option: validateSubmitOn) to listen on for auto validation.
+ - Refactored the built in length rule a bit.
+2.5:
+ - Added appendRulesToFieldClass option that appends all field rules to the fields class, and keeps them in sync through rule enable/disable.
+2.4:
+ - Fixed possible circular ref exception when stringifying output from GetFieldRules method due to top level properties being a jQuery object. If it's a jQuery object, we just pull the ID attribute for the value outputted. This doesn't solve for values that are arrays of jQuery objects.
+2.3:
+ - Added the Subscribe public method to allow more than one event handler after init. Note that using this for onFieldAdded will not work for fields defined in the init fields option since the binding occures after init.
+ - Fixed the UI refreshing on AddField from happening too often.
+ - Added GetFieldRules function that returns all enabled field ids, all enabled roles names, and all the roles properties as key/value pairs... excluding message, validate, isValid, and isEnabled.
+2.2:
+ - Refactored code to remove redundant calls to internal methods, and reduce size a bit.
+ - Removed fieldIndicator feature, and replaced it with the onFieldAdded event since it can be used to acheive the same, and is more flexible.
+2.1:
+ - Added ability to disable/enable validation on field change via 'validateOnChange' option in the field definition.
