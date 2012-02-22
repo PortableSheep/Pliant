@@ -1,6 +1,5 @@
 /*!
- * MicroVal jQuery plugin v2.5
- * http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v2.6 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -16,13 +15,9 @@
                 },
                 length: {
                     validate: function(obj) {
-                        var result = true, len = (this.val()).length;
-                        if (obj.max) {
-                            result &= (len <= obj.max);
-                        }
-                        if (obj.min) {
-                            result &= (len >= obj.min);
-                        }
+                        var len = (this.val()).length, result = true;
+                        result &= (obj.max ? (len <= obj.max) : true);
+                        result &= (obj.min ? (len >= obj.min) : true);
                         return result;
                     },
                     message: 'Invalid length'
@@ -49,6 +44,8 @@
             focusFirstInvalidField: false, //If true, the first invalid field gains focus after validation of the form. Note: This can be out of order if you're not using the reconcileFiledOrder option and have added fields out of order.
             ignoreHidden: true, //If true, fields that are hidden during validation are ignored.
             validateSubmit: true, //If true, validation will be attempted on form submission, as long as the container microval was envoked against is a form.
+            validateSubmitSelector: null, //Defining a selector here causes submit validation to only occur for elements matching the selector. If unset, validation occures for any submit on the form.
+            validateSubmitOn: 'click', //Determines the event to watch for on the validateSubmitSelector.
             inputSelector: ':input[type!=button]', //The input selector used when parsing HTML validation comments, or reconciling the field order.
             parseMarkup: false, //If true, the containers fields will be scraped for HTML comments containing validation rules, and add whatever is valid and found.
             messageElement: '<label />', //The DOM element to use for the validation message.
@@ -400,12 +397,20 @@
             _trigger('onFormValidate', this, [_fields, isValid]);
             return isValid;
         };
-        if (opt.validateSubmit && _$this.is('form')) {
-            _$this.submit(function(e) {
-                if (!_self.Validate()) {
-                    e.preventDefault();
-                }
-            });
+        if (opt.validateSubmit) {
+            if (opt.validateSubmitSelector) {
+                _$this.on(opt.validateSubmitOn||'click', opt.validateSubmitSelector, function(e) {
+                    if (!_self.Validate()) {
+                        e.preventDefault();
+                    }
+                });
+            } else if (_$this.is('form')) {
+                _$this.submit(function(e) {
+                    if (!_self.Validate()) {
+                        e.preventDefault();
+                    }
+                });
+            }
         }
         _addField(opt.fields);
         if (opt.parseMarkup) {
