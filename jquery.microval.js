@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v2.6 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v2.7 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -43,6 +43,7 @@
             validateOnFieldChange: true, //If true, fields are validated on their "change" event.
             focusFirstInvalidField: false, //If true, the first invalid field gains focus after validation of the form. Note: This can be out of order if you're not using the reconcileFiledOrder option and have added fields out of order.
             ignoreHidden: true, //If true, fields that are hidden during validation are ignored.
+            ignoreDisabled: true, //If true, fields that are disabled during validation are ignored.
             validateSubmit: true, //If true, validation will be attempted on form submission, as long as the container microval was envoked against is a form.
             validateSubmitSelector: null, //Defining a selector here causes submit validation to only occur for elements matching the selector. If unset, validation occures for any submit on the form.
             validateSubmitOn: 'click', //Determines the event to watch for on the validateSubmitSelector.
@@ -296,7 +297,7 @@
         };
         _fieldObject.prototype.Validate = function() {
             this.isValid = true;
-            if (this.isEnabled && !(opt.ignoreHidden && !this.field.is(':visible'))) {
+            if (this.isEnabled && !((this.field.is(':disabled') && opt.ignoreDisabled || this.field.is(':hidden') && opt.ignoreHidden))) {
                 for(var i in this.rules) {
                     var rule = this.rules[i];
                     if (rule.isEnabled !== false) {
@@ -340,29 +341,27 @@
                 _refreshState();
             }
         },
-        this.GetFieldRules = function(includeHidden) {
+        this.GetFieldRules = function(includeHidden, includeDisabled) {
             var invalid = [];
             for(var i in _fields) {
-                if (_fields[i].isEnabled) {
-                    if (_fields[i].field.is(':visible') || includeHidden) {
-                        var invRules = [];
-                        for(var r in _fields[i].rules) {
-                            if (_fields[i].rules[r].isEnabled !== false) {
-                                var props = [];
-                                for(var p in _fields[i].rules[r]) {
-                                    if (p != 'validate' && p != 'message' && p != 'isValid' && p != 'isEnabled') {
-                                        var val = _fields[i].rules[r][p];
-                                        if (val instanceof jQuery) {
-                                            val = val.attr('id');
-                                        }
-                                        props.push({ key: p, value: val });
+                if (_fields[i].isEnabled && !(_fields[i].field.is(':hidden') && !includeHidden || _fields[i].field.is(':disabled') && !includeDisabled)) {
+                    var invRules = [];
+                    for(var r in _fields[i].rules) {
+                        if (_fields[i].rules[r].isEnabled !== false) {
+                            var props = [];
+                            for(var p in _fields[i].rules[r]) {
+                                if (p != 'validate' && p != 'message' && p != 'isValid' && p != 'isEnabled') {
+                                    var val = _fields[i].rules[r][p];
+                                    if (val instanceof jQuery) {
+                                        val = val.attr('id');
                                     }
+                                    props.push({ key: p, value: val });
                                 }
-                                invRules.push({ name: r, properties: props });
                             }
+                            invRules.push({ name: r, properties: props });
                         }
-                        invalid.push({ id: _fields[i].field.attr('id'), rules: invRules});
                     }
+                    invalid.push({ id: _fields[i].field.attr('id'), rules: invRules});
                 }
             }
             return invalid;

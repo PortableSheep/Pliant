@@ -1,3 +1,6 @@
+2.7:
+ - Added ignoreDisabled option with a default of true.
+ - Added includeDisabled parameter to GetFieldRules function.
 2.6:
  - Added ability to define submit selector (option: validateSubmitSelector) and event (option: validateSubmitOn) to listen on for auto validation.
  - Refactored the built in length rule a bit.
