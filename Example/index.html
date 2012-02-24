@@ -32,12 +32,12 @@
                 fields: [
                     {
                         field: $('#password'),
-                        container: $('#passwordContainer'),
                         rules: {
                             required:{},
                             length: {
                                 min: 5,
-                                max: 10
+                                max: 10,
+                                message: 'Between 5-10 character.'
                             }
                         }
                     },
@@ -113,7 +113,8 @@
         <div>
             <label for="confirm_password">Confirm password</label>
             <div>
-                <!-- {"required": {}, "length": { "min": 2, "max": 10, "message": "Cannot be longer than 10 characters." }} -->
+                <!-- { "required": {} } -->
+                <!-- { "length": { "min": 2, "max": 10, "message": "Cannot be longer than 10 characters." } } -->
                 <input id="confirm_password" name="confirm_password" type="password" />
             </div>
         </div>

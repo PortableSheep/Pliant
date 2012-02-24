@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.0 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.1 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -121,7 +121,7 @@
                 if (opt.rules[i] || rule.validate) {
                     if (opt.rules[i]) {
                         for(var prop in opt.rules[i]) {
-                            if ((prop != 'message' || prop != 'validate') && !rule[prop]) {
+                            if (prop != 'message' && prop != 'validate' && !rule.hasOwnProperty(prop)) {
                                 rule[prop] = opt.rules[i][prop];
                             }
                         }
