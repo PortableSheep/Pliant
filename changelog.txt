@@ -1,3 +1,11 @@
+3.0:
+ - Changed HTML comment parsing to parse serialized/well formed JSON instead of my custom contricting format.
+ - Updated the example to use JSON in the HTML comments.
+2.9:
+ - Fixed custom properties of defined shared rules not passing to the validate function.
+2.8:
+ - Fixed bug where user could call define a field that would be undefined or an empty array. Resulting in validation always failing.
+   Changed the code to only add a field if it's not undefined, and if the field object has an attribute ID. Otherwise it returns an error.
 2.7:
  - Added ignoreDisabled option with a default of true.
  - Added includeDisabled parameter to GetFieldRules function.

@@ -3,7 +3,7 @@
 <head>
     <title>Validation Examples</title>
     <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
-    <script type="text/javascript" src="jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="..\jquery.microval.js"></script>
     <style type="text/css">
@@ -25,13 +25,14 @@
                     dateformat: {
                         message: 'Invalid Date',
                         validate: function(o) {
-                            return (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/i.test($(this).val()));
+                            return (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/i.test(this.val()));
                         }
                     }
                 },
                 fields: [
                     {
                         field: $('#password'),
+                        container: $('#passwordContainer'),
                         rules: {
                             required:{},
                             length: {
@@ -42,7 +43,6 @@
                     },
                     {
                         field: $('#FirstName'),
-                        ignoreIndicator: true,
                         rules: {
                             required:{
                                 message: 'Required Name!',
@@ -81,7 +81,7 @@
             });
             setTimeout(function() {
                 var test = $('#test');
-                test.html('<label for="dynamicField">Dynamic Field</label><div><!-- validate:required --><input id="dynamicField" name="dynamicField" type="text" /></div>');
+                test.html('<label for="dynamicField">Dynamic Field</label><div><!-- {"required":{}} --><input id="dynamicField" name="dynamicField" type="text" /></div>');
                 val.AddMarkupRules();
             }, 3000);
         });
@@ -96,6 +96,9 @@
             </div>
         </div>
         <div>
+            <div id="passwordContainer">
+
+            </div>
             <label for="password">Password</label>
             <div>
                 <input id="password" name="password" type="password" />
@@ -110,8 +113,7 @@
         <div>
             <label for="confirm_password">Confirm password</label>
             <div>
-                <!-- validate:required -->
-                <!-- validate:length[min:2|max:10|message:'Between 2 and 10 characters'] -->
+                <!-- {"required": {}, "length": { "min": 2, "max": 10, "message": "Cannot be longer than 10 characters." }} -->
                 <input id="confirm_password" name="confirm_password" type="password" />
             </div>
         </div>
@@ -124,6 +126,7 @@
         <div id="test">
             In 3 seconds, this will be replaced with a field and some HTML rules.
         </div>
+        <input class="submit" type="submit" value="Cancel"/>
         <input class="submit" type="submit" value="Submit"/>
     </form>
 </body>

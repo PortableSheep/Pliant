@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v2.7 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.0 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -14,6 +14,7 @@
                     message: 'Required'
                 },
                 length: {
+                    min: 0, max: 256,
                     validate: function(obj) {
                         var len = (this.val()).length, result = true;
                         result &= (obj.max ? (len <= obj.max) : true);
@@ -48,7 +49,7 @@
             validateSubmitSelector: null, //Defining a selector here causes submit validation to only occur for elements matching the selector. If unset, validation occures for any submit on the form.
             validateSubmitOn: 'click', //Determines the event to watch for on the validateSubmitSelector.
             inputSelector: ':input[type!=button]', //The input selector used when parsing HTML validation comments, or reconciling the field order.
-            parseMarkup: false, //If true, the containers fields will be scraped for HTML comments containing validation rules, and add whatever is valid and found.
+            parseMarkup: false, //If true, the containers fields will be scraped for HTML comments containing validation rules, and the rules will be registered.
             messageElement: '<label />', //The DOM element to use for the validation message.
             messageWrap: null, //The DOM element to wrap the validation message with.
             messageContainer: null, //The DOM element to place all validation messages in.
@@ -118,6 +119,13 @@
             for(var i in obj.rules) {
                 var rule = obj.rules[i];
                 if (opt.rules[i] || rule.validate) {
+                    if (opt.rules[i]) {
+                        for(var prop in opt.rules[i]) {
+                            if ((prop != 'message' || prop != 'validate') && !rule[prop]) {
+                                rule[prop] = opt.rules[i][prop];
+                            }
+                        }
+                    }
                     rule.message = $(opt.messageElement).append(rule.message||(opt.rules[i] && opt.rules[i].message ? opt.rules[i].message : '')).addClass(opt.messageElementClass);
                     if (opt.messageWrap) {
                         rule.message = $(opt.messageWrap).append(rule.message).addClass(opt.messageWrapClass);
@@ -156,11 +164,13 @@
                     _addField(fieldObj[i]);
                 }
             } else {
-                if (opt.reconcileFieldOrder) {
-                    var fieldDomIndex = _$this.find(opt.inputSelector).index(fieldObj.field);
-                    _fields.splice((fieldDomIndex > -1 ? fieldDomIndex : _fields.length), 0, new _fieldObject(fieldObj));
-                } else {
-                    _fields.push(new _fieldObject(fieldObj));
+                if (fieldObj.field !== undefined && fieldObj.field.attr('id')) {
+                    if (opt.reconcileFieldOrder) {
+                        var fieldDomIndex = _$this.find(opt.inputSelector).index(fieldObj.field);
+                        _fields.splice((fieldDomIndex > -1 ? fieldDomIndex : _fields.length), 0, new _fieldObject(fieldObj));
+                    } else {
+                        _fields.push(new _fieldObject(fieldObj));
+                    }
                 }
             }
         },
@@ -250,9 +260,9 @@
         },
         _addMarkupRules = this.AddMarkupRules = function(target) {
             $(opt.inputSelector, target||_$this).each(function() {
-                var $this = $(this), prev = this.previousSibling, rules = {}, hasRules = false, comments = [];
+                var $this = $(this), prev = this.previousSibling, rules = null, comments = [];
                 while(prev) {
-                    if (prev.nodeType === 8) {
+                    if (prev.nodeType === 8 && /^\s*{.*}\s*$/.test(prev.nodeValue)) {
                         comments.splice(0, 0, prev.nodeValue);
                     } else if (prev.nodeType === 1) {
                         break;
@@ -260,38 +270,13 @@
                     prev = prev.previousSibling;
                 }
                 for(var i = 0; i < comments.length; i++) {
-                    var match = /\s*validate:(\w+)(?:\[\s*(.*)\s*\]\s*)*/i.exec(comments[i]);
-                    if (match) {
-                        var name = match[1], options = (match[2]) ? match[2].split(/\s*\|\s*/) : null;
-                        if (opt.rules[name]) {
-                            hasRules = true;
-                            var ruleObj = {};
-                            for(var index in options) {
-                                var parsed = options[index].split(':', 2);
-                                if (parsed) {
-                                    var key = parsed[0], val = parsed[1].replace(/^['"]|['"]$/ig, '');
-                                    switch(key) {
-                                        case 'container':
-                                            var tmp = $(val);
-                                            if (tmp.length) {
-                                                ruleObj[key] = tmp;
-                                            }
-                                        break;
-                                        case 'isValid':
-                                            ruleObj[key] = (val == 'true');
-                                        break;
-                                        default:
-                                            ruleObj[key] = val;
-                                        break;
-                                    }
-                                }
-                            }
-                            rules[name] = ruleObj;
-                        }
+                    var obj = $.parseJSON(comments[i]);
+                    if (obj && obj instanceof Object) {
+                        rules = (rules ? $.extend(true, rules, obj) : obj);
                     }
                 }
-                if (hasRules) {
-                    _self.AddField({field: $this, rules: rules});
+                if (rules) {
+                    _self.AddField({ field: $this, rules: rules });
                 }
             });
         };
@@ -397,18 +382,15 @@
             return isValid;
         };
         if (opt.validateSubmit) {
+            var submitHandler = function(e) {
+                if (!_self.Validate()) {
+                    e.preventDefault();
+                }
+            };
             if (opt.validateSubmitSelector) {
-                _$this.on(opt.validateSubmitOn||'click', opt.validateSubmitSelector, function(e) {
-                    if (!_self.Validate()) {
-                        e.preventDefault();
-                    }
-                });
+                _$this.on(opt.validateSubmitOn||'click', opt.validateSubmitSelector, submitHandler);
             } else if (_$this.is('form')) {
-                _$this.submit(function(e) {
-                    if (!_self.Validate()) {
-                        e.preventDefault();
-                    }
-                });
+                _$this.submit(submitHandler);
             }
         }
         _addField(opt.fields);
