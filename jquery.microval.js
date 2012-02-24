@@ -156,7 +156,7 @@
                 });
             }
             _prepRules(obj);
-            _trigger('onFieldAdded', this.field, this);
+            _trigger('onFieldAdded', this.field, [this]);
         },
         _addField = function(fieldObj) {
             if (fieldObj instanceof Array) {
