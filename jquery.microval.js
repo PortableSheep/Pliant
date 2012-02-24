@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.1 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.2 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -62,14 +62,14 @@
             onMessagePlacement: null, //Fired when rule messages are placed. The first param is the message being placed in the DOM, and you're responsible for inserting it.
             onInvalidFieldFocus: null //Fired when an invalid field is auto focused when focusFirstInvalidField is enabled. The 'this' context is the field being focused.
         }, o), _$this = $(this), _self = this, _invalidCount = 0, _fields = [],
-        _trigger = function(event, context, data) {
-            if (opt[event]) {
-                if (opt[event] instanceof Array) {
-                    for(var i in opt[event]) {
-                        opt[event][i].apply(context, data||[]);
+        _trigger = function(e, context, data) {
+            if (opt[e]) {
+                if (opt[e] instanceof Array) {
+                    for(var i in opt[e]) {
+                        opt[e][i].apply(context, data||[]);
                     }
                 } else {
-                    opt[event].apply(context, data||[]);
+                    opt[e].apply(context, data||[]);
                 }
             }
         },
@@ -298,12 +298,12 @@
             }
             return this.isValid;
         };
-        this.Subscribe = function(event, handler) {
+        this.Subscribe = function(e, handler) {
             if (handler instanceof Function){
-                if (opt[event] instanceof Array) {
-                    opt[event].push(handler);
+                if (opt[e] instanceof Array) {
+                    opt[e].push(handler);
                 } else {
-                    opt[event] = (opt[event] ? [opt[event], handler] : [handler]);
+                    opt[e] = (opt[e] ? [opt[e], handler] : [handler]);
                 }
                 return this;
             }

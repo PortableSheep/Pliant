@@ -1,3 +1,5 @@
+3.2:
+ - Fixed bug where some method parameters were named a reserved JS keyword, which busted IE.
 3.1:
  - Fixed bug in custom propertly merging that made properties with false properties never carry over.
 3.0:
