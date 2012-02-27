@@ -1,3 +1,5 @@
+3.3:
+ - Changed focusFirstInvalidField to only apply when Validate is called, or form validation occurs. Having it on field change validation was jarring for the user if they wanted to fix another field before fixing the first invalid field.
 3.2:
  - Fixed bug where some method parameters were named a reserved JS keyword, which busted IE.
 3.1:

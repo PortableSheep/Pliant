@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.2 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.3 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -74,7 +74,6 @@
             }
         },
         _refreshState = function() {
-            var invalidFocused = false;
             _invalidCount = 0;
             for(var i in _fields) {
                 if (_fields[i].isEnabled) {
@@ -96,11 +95,6 @@
                         _invalidCount++;
                         if (_fields[i].field.is(':input')) {
                             _fields[i].field.addClass(opt.inputClass);
-                            if (opt.focusFirstInvalidField && !invalidFocused) {
-                                _trigger('onInvalidFieldFocus', _fields[i].field);
-                                _fields[i].field.focus();
-                                invalidFocused = true;
-                            }
                         }
                     } else {
                         if (_fields[i].field.is(':input')) {
@@ -367,9 +361,14 @@
             _refreshState();
         },
         this.Validate = function() {
-            var isValid = true;
+            var isValid = true, invalidFocused = false;
             for(var i in _fields) {
                 isValid &= _fields[i].Validate();
+                if (opt.focusFirstInvalidField && !isValid && !invalidFocused) {
+                    _trigger('onInvalidFieldFocus', _fields[i].field);
+                    _fields[i].field.focus();
+                    invalidFocused = true;
+                }
             }
             _refreshState();
             isValid = Boolean(isValid);
