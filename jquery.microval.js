@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.5 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.6 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -391,7 +391,7 @@
                 }
             };
             if (opt.validateSubmitSelector) {
-                _$this.on(opt.validateSubmitOn||'click', opt.validateSubmitSelector, submitHandler);
+                _$this.on(opt.validateSubmitOn||'click', (opt.validateSubmitSelector instanceof jQuery ? opt.validateSubmitSelector.selector : opt.validateSubmitSelector), submitHandler);
             } else if (_$this.is('form')) {
                 _$this.submit(submitHandler);
             }

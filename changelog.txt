@@ -1,3 +1,5 @@
+3.6:
+ - Fixed bug with validateSubmitSelector option where passing in a jQuery object would result in all fields triggering validate on click. Added a check for jQuery object, and pull the selector from it before wiring up to prevent this issue.
 3.5:
  - Changed GetFieldRules to filter out any rule properties that are objects unless its fourth param is True. This and 3.4 changes are added to make the results easier to consume by other languages when stringified since the internal objects are non-standard and don't play well with ASP.NET for example.
 3.4:
