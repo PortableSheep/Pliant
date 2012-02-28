@@ -1,3 +1,7 @@
+3.5:
+ - Changed GetFieldRules to filter out any rule properties that are objects unless its fourth param is True. This and 3.4 changes are added to make the results easier to consume by other languages when stringified since the internal objects are non-standard and don't play well with ASP.NET for example.
+3.4:
+ - Changed GetFieldRules to filter out any rule properties that are functions unless its third param is True.
 3.3:
  - Changed focusFirstInvalidField to only apply when Validate is called, or form validation occurs. Having it on field change validation was jarring for the user if they wanted to fix another field before fixing the first invalid field.
 3.2:

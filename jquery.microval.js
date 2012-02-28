@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.3 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.5 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -320,7 +320,7 @@
                 _refreshState();
             }
         },
-        this.GetFieldRules = function(includeHidden, includeDisabled) {
+        this.GetFieldRules = function(includeHidden, includeDisabled, includeFunctions, includeObjects) {
             var invalid = [];
             for(var i in _fields) {
                 if (_fields[i].isEnabled && !(_fields[i].field.is(':hidden') && !includeHidden || _fields[i].field.is(':disabled') && !includeDisabled)) {
@@ -328,13 +328,17 @@
                     for(var r in _fields[i].rules) {
                         if (_fields[i].rules[r].isEnabled !== false) {
                             var props = [];
-                            for(var p in _fields[i].rules[r]) {
-                                if (p != 'validate' && p != 'message' && p != 'isValid' && p != 'isEnabled') {
-                                    var val = _fields[i].rules[r][p];
-                                    if (val instanceof jQuery) {
-                                        val = val.attr('id');
-                                    }
-                                    props.push({ key: p, value: val });
+                            for(var key in _fields[i].rules[r]) {
+                                var val = _fields[i].rules[r][key];
+                                if (key == 'isValid' || key == 'isEnabled' || key == 'message' || val === undefined) {
+                                    continue;
+                                } else if (val instanceof jQuery) {
+                                    val = val.attr('id');
+                                } else if (val instanceof Function && !includeFunctions || val instanceof Object && !includeObjects) {
+                                    continue;
+                                }
+                                if (val != undefined) {
+                                    props.push({ key: key, value: val });
                                 }
                             }
                             invRules.push({ name: r, properties: props });
