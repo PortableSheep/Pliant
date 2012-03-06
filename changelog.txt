@@ -1,3 +1,11 @@
+3.8:
+ - Fixed a bug in the messageContainer visibility logic that caused the container to never be shown since the visibility of the error message was checked when the parent was hidden.
+3.7:
+ - Added "inherit" property support for rules; this allows you to inherit an existing rules object, esentially aliasing it and allowing you to override its properties.
+ - Changed Subscribe to throw an exception when the handler isn't a valid function, or when the event name doesn't exist.
+ - Changed execution order of onFieldValidate event so the GetInvalidCount method returns accurate results.
+ - Changed AddMarkupRules method to take a object for a parameter which allow you to set "target" and "inputSelector". By default the target is the DOM microval was instantiated against, and inputSelector is what is set on init. This allows for some custom selectors when parsing HTML rules against ASP.NET radio groups for example, since they're rendered as a table.
+ - Added message container support for fields, by setting the "container" property on a field.
 3.6:
  - Fixed bug with validateSubmitSelector option where passing in a jQuery object would result in all fields triggering validate on click. Added a check for jQuery object, and pull the selector from it before wiring up to prevent this issue.
 3.5:

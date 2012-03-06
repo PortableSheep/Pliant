@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.6 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.8 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -75,60 +75,75 @@
         },
         _refreshState = function() {
             _invalidCount = 0;
+            var msgSel = '.'+opt.messageElementClass;
             for(var i in _fields) {
-                if (_fields[i].isEnabled) {
+                var curField = _fields[i];
+                if (curField.isEnabled) {
                     var isValid = true;
-                    for(var r in _fields[i].rules) {
-                        var rule = _fields[i].rules[r];
+                    for(var r in curField.rules) {
+                        var rule = curField.rules[r];
                         if (rule.isEnabled === false || (opt.haltOnFirstInvalidRule && !Boolean(isValid))) {
                             rule.message.hide();
                             continue;
                         }
                         isValid &= (rule.isValid !== false);
                         if (rule.isValid !== false) {
-                            _fields[i].rules[r].message.hide();
+                            rule.message.hide();
                         } else {
-                            _fields[i].rules[r].message.show();
+                            rule.message.show();
                         }
                     }
-                    if ((_fields[i].isValid = Boolean(isValid)) === false) {
+                    if ((curField.isValid = Boolean(isValid)) === false) {
                         _invalidCount++;
-                        if (_fields[i].field.is(':input')) {
-                            _fields[i].field.addClass(opt.inputClass);
+                        if (curField.field.is(':input')) {
+                            curField.field.addClass(opt.inputClass);
                         }
-                    } else {
-                        if (_fields[i].field.is(':input')) {
-                            _fields[i].field.removeClass(opt.inputClass);
+                    } else if (curField.field.is(':input')) {
+                        curField.field.removeClass(opt.inputClass);
+                    }
+                    if (curField.container) {
+                        if (curField.container.find(msgSel).filter(':mvVisible').length>0) {
+                            curField.container.show();
+                        } else {
+                            curField.container.hide();
                         }
                     }
                 }
             }
-            if (opt.messageContainer && _invalidCount > 0) {
-                opt.messageContainer.show();
-            } else if (opt.messageContainer && _invalidCount <= 0) {
-                opt.messageContainer.hide();
+            if (opt.messageContainer) {
+                if (opt.messageContainer.find(msgSel).filter(':mvVisible').length > 0) {
+                    opt.messageContainer.show();
+                } else {
+                    opt.messageContainer.hide();
+                }
+            }
+        },
+        _extendRule = function(rule, extendFrom) {
+            if (extendFrom) {
+                for(var prop in extendFrom) {
+                    if (!rule.hasOwnProperty(prop) && prop != 'inherit') {
+                        rule[prop] = extendFrom[prop];
+                    }
+                }
             }
         },
         _prepRules = function(obj) {
             for(var i in obj.rules) {
-                var rule = obj.rules[i];
-                if (opt.rules[i] || rule.validate) {
-                    if (opt.rules[i]) {
-                        for(var prop in opt.rules[i]) {
-                            if (prop != 'message' && prop != 'validate' && !rule.hasOwnProperty(prop)) {
-                                rule[prop] = opt.rules[i][prop];
-                            }
-                        }
-                    }
-                    rule.message = $(opt.messageElement).append(rule.message||(opt.rules[i] && opt.rules[i].message ? opt.rules[i].message : '')).addClass(opt.messageElementClass);
+                var rule = obj.rules[i], parentRule = opt.rules[i], inheritedRule = (parentRule && parentRule.inherit && opt.rules[parentRule.inherit] ? opt.rules[parentRule.inherit] : null);
+                if (parentRule || rule.validate) {
+                    _extendRule(rule, parentRule);
+                    _extendRule(rule, inheritedRule);
+                    rule.message = $(opt.messageElement).addClass(opt.messageElementClass).append(rule.message);
                     if (opt.messageWrap) {
-                        rule.message = $(opt.messageWrap).append(rule.message).addClass(opt.messageWrapClass);
+                        rule.message = $(opt.messageWrap).addClass(opt.messageWrapClass).append(rule.message);
                     }
                     rule.message.hide();
                     if (opt.onMessagePlacement) {
                         _trigger('onMessagePlacement', obj.field, rule.message);
                     } else if (rule.container) {
                         $(rule.container).append(rule.message);
+                    } else if (obj.container) {
+                        $(obj.container).append(rule.message);
                     } else if (opt.messageContainer) {
                         opt.messageContainer.append(rule.message);
                     } else {
@@ -146,8 +161,10 @@
             if (obj.validateOnChange || opt.validateOnFieldChange && obj.validateOnChange !== false) {
                 this.field.bind('change', function(){
                     fInst.Validate();
-                    _refreshState();
                 });
+            }
+            if (this.container) {
+                this.container.hide();
             }
             _prepRules(obj);
             _trigger('onFieldAdded', this.field, [this]);
@@ -157,21 +174,19 @@
                 for(var i in fieldObj) {
                     _addField(fieldObj[i]);
                 }
-            } else {
-                if (fieldObj.field !== undefined && fieldObj.field.attr('id')) {
-                    if (opt.reconcileFieldOrder) {
-                        var fieldDomIndex = _$this.find(opt.inputSelector).index(fieldObj.field);
-                        _fields.splice((fieldDomIndex > -1 ? fieldDomIndex : _fields.length), 0, new _fieldObject(fieldObj));
-                    } else {
-                        _fields.push(new _fieldObject(fieldObj));
-                    }
+            } else if (fieldObj.field !== undefined && fieldObj.field.attr('id')) {
+                if (opt.reconcileFieldOrder) {
+                    var fieldDomIndex = _$this.find(opt.inputSelector).index(fieldObj.field);
+                    _fields.splice((fieldDomIndex > -1 ? fieldDomIndex : _fields.length), 0, new _fieldObject(fieldObj));
+                } else {
+                    _fields.push(new _fieldObject(fieldObj));
                 }
             }
         },
         _getFieldObjectIndex = function(fieldObj) {
             fieldObj = (!(fieldObj instanceof _fieldObject) && fieldObj.field === undefined) ? { field: fieldObj } : fieldObj;
             for(var i in _fields) {
-                if (_fields[i].field == fieldObj.field || _fields[i].field.attr('id') == fieldObj.field.attr('id')) {
+                if (_fields[i].field.get(0) == fieldObj.field.get(0) || (_fields[i].field.attr('id') && (_fields[i].field.attr('id') == fieldObj.field.attr('id')))) {
                     return i;
                 }
             }
@@ -252,8 +267,9 @@
                 }
             }
         },
-        _addMarkupRules = this.AddMarkupRules = function(target) {
-            $(opt.inputSelector, target||_$this).each(function() {
+        _addMarkupRules = this.AddMarkupRules = function(options) {
+            var selOptions = $.extend({ target: _$this, inputSelector: opt.inputSelector }, options);
+            $(selOptions.inputSelector, selOptions.target).each(function() {
                 var $this = $(this), prev = this.previousSibling, rules = null, comments = [];
                 while(prev) {
                     if (prev.nodeType === 8 && /^\s*{.*}\s*$/.test(prev.nodeValue)) {
@@ -283,9 +299,10 @@
                         if (opt.haltOnFirstInvalidRule && !this.isValid) {
                             break;
                         }
-                        this.isValid &= rule.isValid = (rule.validate) ? Boolean(rule.validate.call(this.field, rule)) : Boolean(opt.rules[i].validate.call(this.field, rule));
+                        this.isValid &= rule.isValid = Boolean(rule.validate ? rule.validate.call(this.field, rule) : false);
                     }
                 }
+                _refreshState();
                 if (opt.validateOnFieldChange && opt.onFieldValidate) {
                     _trigger('onFieldValidate', _self, [this, this.isValid]);
                 }
@@ -294,6 +311,9 @@
         };
         this.Subscribe = function(e, handler) {
             if (handler instanceof Function){
+                if (!opt.hasOwnProperty(e)) {
+                    throw 'Event `' + e + '` is an invalid event.';
+                }
                 if (opt[e] instanceof Array) {
                     opt[e].push(handler);
                 } else {
@@ -301,7 +321,7 @@
                 }
                 return this;
             }
-            return false;
+            throw 'Handler for event `' + e + '` is not a valid function.';
         },
         this.AddField = function(fieldObj) {
             if (fieldObj) {
@@ -376,11 +396,6 @@
             }
             _refreshState();
             isValid = Boolean(isValid);
-            if (!isValid) {
-                if (opt.messageContainer) {
-                    opt.messageContainer.show();
-                }
-            }
             _trigger('onFormValidate', this, [_fields, isValid]);
             return isValid;
         };
@@ -395,6 +410,9 @@
             } else if (_$this.is('form')) {
                 _$this.submit(submitHandler);
             }
+        }
+        if (!$.expr[':'].mvVisible) {
+            $.expr[':'].mvVisible = function(a) { return ($(a).css('display') != 'none'); };
         }
         _addField(opt.fields);
         if (opt.parseMarkup) {
