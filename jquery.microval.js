@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.8 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.9 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -102,7 +102,7 @@
                         curField.field.removeClass(opt.inputClass);
                     }
                     if (curField.container) {
-                        if (curField.container.find(msgSel).filter(':mvVisible').length>0) {
+                        if (curField.container.find(msgSel).filter(':mvVisible').length > 0) {
                             curField.container.show();
                         } else {
                             curField.container.hide();
@@ -157,7 +157,7 @@
         },
         _fieldObject = function(obj) {
             var fInst = this;
-            this.field = obj.field, this.rules = obj.rules, this.isValid = true, this.isEnabled = true;
+            this.field = obj.field, this.container = obj.container, this.rules = obj.rules, this.isValid = true, this.isEnabled = true;
             if (obj.validateOnChange || opt.validateOnFieldChange && obj.validateOnChange !== false) {
                 this.field.bind('change', function(){
                     fInst.Validate();

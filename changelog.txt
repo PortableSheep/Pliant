@@ -1,3 +1,5 @@
+3.9:
+ - Fixed a bug in field message container support, where the container dom would be lost.
 3.8:
  - Fixed a bug in the messageContainer visibility logic that caused the container to never be shown since the visibility of the error message was checked when the parent was hidden.
 3.7:
