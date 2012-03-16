@@ -1,3 +1,9 @@
+3.12:
+ - Added validateSubmitScope option that lets you specify the DOM scope when binding to the validateSubmitSelector.
+3.11:
+ - Added detection of malformed field rules, and init rules. Any malformed rules will throw an error with the rule name that's invalid.
+3.10:
+ - Fixed a bug with event triggering not using well formed arguments, causing errors with onMessagePlacement is used.
 3.9:
  - Fixed a bug in field message container support, where the container dom would be lost.
 3.8:

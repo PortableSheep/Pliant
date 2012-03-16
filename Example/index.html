@@ -27,6 +27,11 @@
                         validate: function(o) {
                             return (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/i.test(this.val()));
                         }
+                    },
+                    mylength: {
+                        inherit: 'length',
+                        min: 10, max: 20,
+                        message: 'Between 10 and 20 characters.'
                     }
                 },
                 fields: [
@@ -48,7 +53,7 @@
                                 message: 'Required Name!',
                                 container: $('#firstNameError')
                             },
-                            length: {
+                            mylength: {
                                 min: 10,
                                 max: 20
                             }
@@ -57,7 +62,10 @@
                     {
                         field: $('#username'),
                         rules: {
-                            required: {}
+                            required: {},
+                            mylength: {
+                                message: 'Must be between 10 and 20 characters.'
+                            }
                         }
                     },
                     {

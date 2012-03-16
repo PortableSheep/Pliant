@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.9 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.12 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - RushTheWeb.com
  * Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
@@ -7,34 +7,18 @@
     $.fn.microval = function(o) {
         var opt = $.extend(true, {
             rules: {
-                required: {
-                    validate: function() {
-                        return (this.is('[type=checkbox],[type=radio]') ? this.is(':checked') : ($.trim(this.val()).length > 0));
-                    },
-                    message: 'Required'
-                },
+                required: { validate: function() { return (this.is('[type=checkbox],[type=radio]') ? this.is(':checked') : ($.trim(this.val()).length > 0)); }, message: 'Required' },
                 length: {
-                    min: 0, max: 256,
+                    min: 0, max: 256, message: 'Invalid length',
                     validate: function(obj) {
                         var len = (this.val()).length, result = true;
                         result &= (obj.max ? (len <= obj.max) : true);
                         result &= (obj.min ? (len >= obj.min) : true);
                         return result;
-                    },
-                    message: 'Invalid length'
+                    }
                 },
-                numeric: {
-                    validate: function() {
-                        return /^\d+$/i.test(this.val());
-                    },
-                    message: 'Numeric only'
-                },
-                email: {
-                    validate: function() {
-                        return /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/i.test(this.val());
-                    },
-                    message: 'Invalid email'
-                }
+                numeric: { validate: function() { return /^\d+$/i.test(this.val()); }, message: 'Numeric only' },
+                email: { validate: function() { return /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/i.test(this.val()); }, message: 'Invalid email' }
             },
             fields: [], //Collection of field objects to add for validation on load.
             appendRulesToFieldClass: false, //If true, the fields class attribute will have rule names appended to it.
@@ -48,6 +32,7 @@
             validateSubmit: true, //If true, validation will be attempted on form submission, as long as the container microval was envoked against is a form.
             validateSubmitSelector: null, //Defining a selector here causes submit validation to only occur for elements matching the selector. If unset, validation occures for any submit on the form.
             validateSubmitOn: 'click', //Determines the event to watch for on the validateSubmitSelector.
+            validateSubmitScope: null, //A jQuery selector to use for the scope of the validate submit selector.
             inputSelector: ':input[type!=button]', //The input selector used when parsing HTML validation comments, or reconciling the field order.
             parseMarkup: false, //If true, the containers fields will be scraped for HTML comments containing validation rules, and the rules will be registered.
             messageElement: '<label />', //The DOM element to use for the validation message.
@@ -130,6 +115,9 @@
         _prepRules = function(obj) {
             for(var i in obj.rules) {
                 var rule = obj.rules[i], parentRule = opt.rules[i], inheritedRule = (parentRule && parentRule.inherit && opt.rules[parentRule.inherit] ? opt.rules[parentRule.inherit] : null);
+                if ((rule.message === undefined || (rule.validate === undefined || !(rule.validate instanceof Function))) && !parentRule) {
+                    throw 'Rule `' + i + '` is invalid.';
+                }
                 if (parentRule || rule.validate) {
                     _extendRule(rule, parentRule);
                     _extendRule(rule, inheritedRule);
@@ -139,7 +127,7 @@
                     }
                     rule.message.hide();
                     if (opt.onMessagePlacement) {
-                        _trigger('onMessagePlacement', obj.field, rule.message);
+                        _trigger('onMessagePlacement', obj.field, [rule.message]);
                     } else if (rule.container) {
                         $(rule.container).append(rule.message);
                     } else if (obj.container) {
@@ -406,13 +394,18 @@
                 }
             };
             if (opt.validateSubmitSelector) {
-                _$this.on(opt.validateSubmitOn||'click', (opt.validateSubmitSelector instanceof jQuery ? opt.validateSubmitSelector.selector : opt.validateSubmitSelector), submitHandler);
+                (opt.validateSubmitScope||_$this).on(opt.validateSubmitOn||'click', (opt.validateSubmitSelector instanceof jQuery ? opt.validateSubmitSelector.selector : opt.validateSubmitSelector), submitHandler);
             } else if (_$this.is('form')) {
                 _$this.submit(submitHandler);
             }
         }
         if (!$.expr[':'].mvVisible) {
             $.expr[':'].mvVisible = function(a) { return ($(a).css('display') != 'none'); };
+        }
+        for(var rname in opt.rules) {
+            if ((opt.rules[rname].message === undefined || (opt.rules[rname].validate === undefined || !(opt.rules[rname].validate instanceof Function))) && opt.rules[rname].inherit === undefined) {
+                throw 'Rule `' + rname + '` is invalid.';
+            }
         }
         _addField(opt.fields);
         if (opt.parseMarkup) {
