@@ -6,6 +6,8 @@
     <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="..\jquery.microval.js"></script>
+    <script type="text/javascript" src="..\plugins\mv.inputhint.js"></script>
+    <script type="text/javascript" src="..\plugins\mv.inputsuccess.js"></script>
     <style type="text/css">
         .mv-element-error {
             color: red;
@@ -15,73 +17,91 @@
             border: 1px solid red;
             background-color: #ffcccc;
         }
+        .mv-element-success {
+            color: #00CC66;
+        }
+        .mv-input-success {
+            background-color: #00FF99;
+        }
+        .mvHint {
+            color: gray !important;
+        }
     </style>
     <script type="text/javascript">
         $(function() {
-            var datePick = $('#date');
-            var val = $('#signupForm').microval({
-                parseMarkup: true,
-                rules: {
-                    dateformat: {
-                        message: 'Invalid Date',
-                        validate: function(o) {
-                            return (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/i.test(this.val()));
+            var datePick = $('#date'),
+                username = $('#username'),
+                password = $('#password'),
+                firstname = $('#FirstName'),
+                val = $('#signupForm').microval({
+                    appendRulesToFieldClass: true,
+                    parseMarkup: true,
+                    rules: {
+                        dateformat: {
+                            message: 'Invalid Date',
+                            validate: function(o) {
+                                return (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/i.test(this.val()));
+                            }
+                        },
+                        mylength: {
+                            inherit: 'length',
+                            min: 10, max: 20,
+                            message: 'Between 10 and 20 characters.'
                         }
                     },
-                    mylength: {
-                        inherit: 'length',
-                        min: 10, max: 20,
-                        message: 'Between 10 and 20 characters.'
-                    }
-                },
-                fields: [
-                    {
-                        field: $('#password'),
-                        rules: {
-                            required:{},
-                            length: {
-                                min: 5,
-                                max: 10,
-                                message: 'Between 5-10 character.'
+                    plugins: {
+                        inputhint: {},
+                        inputsuccess: {}
+                    },
+                    fields: [
+                        {
+                            field: password,
+                            successMessage: 'Test',
+                            rules: {
+                                required:{},
+                                length: {
+                                    min: 5,
+                                    max: 10,
+                                    message: 'Between 5-10 character.'
+                                }
+                            }
+                        },
+                        {
+                            field: firstname,
+                            rules: {
+                                required:{
+                                    message: 'Required Name!',
+                                    container: $('#firstNameError')
+                                },
+                                mylength: {
+                                    max: 100
+                                }
+                            }
+                        },
+                        {
+                            field: username,
+                            // chain: [password, datePick],
+                            rules: {
+                                required: {},
+                                mylength: {
+                                    message: 'Must be between 10 and 20 characters.'
+                                }
+                            }
+                        },
+                        {
+                            field: datePick,
+                            rules: {
+                                required: {},
+                                dateformat: {}
                             }
                         }
+                    ],
+                    onFieldAdded: function() {
+                        this.parents('div:eq(1)').find('label:first').prepend('*').addClass('ValidationLabel');
                     },
-                    {
-                        field: $('#FirstName'),
-                        rules: {
-                            required:{
-                                message: 'Required Name!',
-                                container: $('#firstNameError')
-                            },
-                            mylength: {
-                                min: 10,
-                                max: 20
-                            }
-                        }
-                    },
-                    {
-                        field: $('#username'),
-                        rules: {
-                            required: {},
-                            mylength: {
-                                message: 'Must be between 10 and 20 characters.'
-                            }
-                        }
-                    },
-                    {
-                        field: datePick,
-                        rules: {
-                            required: {},
-                            dateformat: {}
-                        }
-                    }
-                ],
-                onFieldAdded: function() {
-                    this.parents('div:eq(1)').find('label:first').prepend('*').addClass('ValidationLabel');
-                },
-                focusFirstInvalidField: true,
-                reconcileFieldOrder: true
-            });
+                    focusFirstInvalidField: true,
+                    reconcileFieldOrder: true
+                });
             datePick.datepicker({
                 showOn: "button",
                 buttonImage: "calendar.gif",
@@ -100,7 +120,7 @@
         <div>
             <label for="username">Username</label>
             <div>
-                <input id="username" name="username" type="text">
+                <input id="username" name="username" type="text" hint="Username" mask="###-##-####">
             </div>
         </div>
         <div>
@@ -109,13 +129,13 @@
             </div>
             <label for="password">Password</label>
             <div>
-                <input id="password" name="password" type="password" />
+                <input id="password" name="password" type="password" hint="Password"/>
             </div>
         </div>
         <div>
             <label for="date">Date</label>
             <div>
-                <input id="date" name="date" type="text" />
+                <input id="date" name="date" type="text" hint="##/##/####" />
             </div>
         </div>
         <div>
@@ -127,7 +147,8 @@
             </div>
         </div>
         <div>
-            <div id="firstNameError"></div><label for="FirstName">First Name (Uses container for error!)</label>
+            <label for="FirstName">First Name (Uses container for error!)</label>
+            <div id="firstNameError"></div>
             <div>
                 <input id="FirstName" name="FirstName" type="text" />
             </div>
