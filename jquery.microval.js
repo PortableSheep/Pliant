@@ -1,5 +1,5 @@
 /*!
- * MicroVal jQuery plugin v3.2.1 - http://bitbucket.org/rushtheweb/microval/
+ * MicroVal jQuery plugin v3.2.5 - http://bitbucket.org/rushtheweb/microval/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
@@ -132,8 +132,8 @@
                 this[i] = obj[i];
             }
             if (obj.validateOnChange || opt.validateOnFieldChange && obj.validateOnChange !== false) {
-                this.field.bind('change', function changeVal(){
-                    fInst.Validate(true);
+                this.field.on('change.mvinst', function(){
+                    fInst.Validate(true, false, true);
                 });
             }
             if (this.container) {
@@ -236,39 +236,26 @@
                 }
             }
         },
-        _addMarkupRules = this.AddMarkupRules = function(o) {
-            var selOptions = $.extend({ target: _$this, inputSelector: opt.inputSelector }, o);
-            $(selOptions.inputSelector, selOptions.target).each(function() {
-                var $this = $(this), prev = this.previousSibling, comments = [], fObj = { field: $this, rules: null};
-                while(prev) {
-                    if (prev.nodeType === 8 && /^\s*{.*}\s*$/.test(prev.nodeValue)) {
-                        comments.splice(0, 0, prev.nodeValue);
-                    } else if (prev.nodeType === 1) {
-                        break;
-                    }
-                    prev = prev.previousSibling;
+        _traverseComments = function(start) {
+            var out = [];
+            if (start.nodeType === 8 && /^\s*{.*}\s*$/.test(start.nodeValue)) {
+                out.splice(0, 0, start.nodeValue);
+            } else if (start.childNodes.length > 0) {
+                for(var i = 0; i < start.childNodes.length; i++) {
+                    out = out.concat(_traverseComments(start.childNodes[i]));
                 }
-                for(var i in comments) {
-                    var obj = $.parseJSON(comments[i]), tmpRules = null;
-                    if (obj && obj instanceof Object) {
-                        tmpRules = obj;
-                        if (obj.hasOwnProperty('field') && obj.field instanceof Object) {
-                            for(var x in obj.field) {
-                                fObj[x] = obj.field[x];
-                            }
-                            if (obj.hasOwnProperty('rules')) {
-                                tmpRules = obj.rules;
-                            } else { 
-                               continue;
-                            }
-                        }
-                        fObj.rules = (fObj.rules ? $.extend(true, fObj.rules, tmpRules) : tmpRules);
-                    }
+            }
+            return out;
+        },
+        _addMarkupRules = this.AddMarkupRules = function(target) {
+            var _target = target||_$this, $this = $(this), comments = _traverseComments(_target[0]), fObj = null;
+            for(var i in comments) {
+                var obj = $.parseJSON(comments[i]);
+                if (obj && obj instanceof Object && obj.hasOwnProperty('field') && obj.hasOwnProperty('rules')) {
+                    obj.field = $(obj.field);
+                    _self.AddField(obj);
                 }
-                if (fObj.rules) {
-                    _self.AddField(fObj);
-                }
-            });
+            }
         },
         _validateField = this.ValidateField = function(field) {
             if (field instanceof Array) {
@@ -283,18 +270,18 @@
                 if (i == -1) {
                     throw 'Field `' + field.selector + '` cannot be found.';
                 }                
-                _fields[i].Validate(true, true);
+                return _fields[i].Validate(true, true, false);
             }
         };
-        _fieldObject.prototype.Validate = function(refreshState, fromChain) {
+        _fieldObject.prototype.Validate = function(refreshState, fromChain, fromChange) {
             this.isValidPrev = this.isValid;
             this.isValid = true;
-            if (this.isEnabled && !((this.field.is(':disabled') && opt.ignoreDisabled || this.field.is(':hidden') && opt.ignoreHidden)) && !(arguments.callee.caller.name == 'changeVal' && this.validateOnChange instanceof Function && this.validateOnChange.call(_self, this) === false)) {
+            if (this.isEnabled && !((this.field.is(':disabled') && opt.ignoreDisabled || this.field.is(':hidden') && opt.ignoreHidden)) && !(fromChange && this.validateOnChange instanceof Function && this.validateOnChange.call(_self, this) === false)) {
                 _trigger('onPreFieldValidate', _self, [this]);
                 for(var i in this.rules) {
                     var rule = this.rules[i];
                     if (rule.isEnabled !== false) {
-                        if (rule.validateOnChange !== undefined && rule.validateOnChange !== true && arguments.callee.caller.name == 'changeVal') {
+                        if (rule.validateOnChange !== undefined && rule.validateOnChange !== true && fromChange) {
                             if (rule.validateOnChange instanceof Function && rule.validateOnChange.call(_self, this) === false || rule.validateOnChange === false) {
                                 rule.isValid = true;
                                 continue;
@@ -313,7 +300,7 @@
                 if (opt.validateOnFieldChange) {
                     _trigger('onFieldValidate', _self, [this, this.isValid]);
                 }
-                if (this.chain && !fromChain && arguments.callee.caller.name == 'changeVal') {
+                if (this.chain && !fromChain && fromChange) {
                     if (this.chain instanceof Array) {
                         for(var c in this.chain) {
                             _validateField(this.chain[c]);
@@ -403,7 +390,7 @@
         this.Validate = function() {
             var isValid = true, invalidFocused = false;
             for(var i in _fields) {
-                isValid &= _fields[i].Validate();
+                isValid &= _fields[i].Validate(false, false, false);
                 if (opt.focusFirstInvalidField && !isValid && !invalidFocused) {
                     _trigger('onInvalidFieldFocus', _fields[i].field);
                     _fields[i].field.focus();
@@ -450,7 +437,7 @@
                 }
             }
         }
-        _addField(opt.fields);
+        this.AddField(opt.fields);
         _refreshState();
         if (opt.parseMarkup) {
             _addMarkupRules();

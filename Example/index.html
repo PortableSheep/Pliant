@@ -8,6 +8,7 @@
     <script type="text/javascript" src="..\jquery.microval.js"></script>
     <script type="text/javascript" src="..\plugins\mv.inputhint.js"></script>
     <script type="text/javascript" src="..\plugins\mv.inputsuccess.js"></script>
+    <script type="text/javascript" src="..\plugins\mv.inputmask.js"></script>
     <style type="text/css">
         .mv-element-error {
             color: red;
@@ -50,13 +51,16 @@
                         }
                     },
                     plugins: {
-                        inputhint: {},
-                        inputsuccess: {}
+                        inputmask: {
+                            emptyMaskClass: 'mvHint'
+                        },
+                        inputhint: {}
                     },
                     fields: [
                         {
                             field: password,
                             successMessage: 'Test',
+                            hintText: 'Password',
                             rules: {
                                 required:{},
                                 length: {
@@ -90,6 +94,7 @@
                         },
                         {
                             field: datePick,
+                            mask: 'date',
                             rules: {
                                 required: {},
                                 dateformat: {}
@@ -109,7 +114,7 @@
             });
             setTimeout(function() {
                 var test = $('#test');
-                test.html('<label for="dynamicField">Dynamic Field</label><div><!-- {"required":{}} --><input id="dynamicField" name="dynamicField" type="text" /></div>');
+                test.html('<label for="dynamicField">Dynamic Field</label><div><!-- { "field": "#dynamicField", "rules": { "required":{}} } --><input id="dynamicField" name="dynamicField" type="text" /></div>');
                 val.AddMarkupRules();
             }, 3000);
         });
@@ -120,7 +125,7 @@
         <div>
             <label for="username">Username</label>
             <div>
-                <input id="username" name="username" type="text" hint="Username" mask="###-##-####">
+                <input id="username" name="username" type="text">
             </div>
         </div>
         <div>
@@ -135,14 +140,14 @@
         <div>
             <label for="date">Date</label>
             <div>
-                <input id="date" name="date" type="text" hint="##/##/####" />
+                <input id="date" name="date" type="text" />
             </div>
         </div>
         <div>
             <label for="confirm_password">Confirm password</label>
             <div>
-                <!-- { "required": {} } -->
-                <!-- { "length": { "min": 2, "max": 10, "message": "Cannot be longer than 10 characters." } } -->
+                <!-- { "field": "#confirm_password", "rules": { "required" : {} } } -->
+                <!-- { "field": "#confirm_password", "rules": { "length": { "min": 2, "max": 10, "message": "Cannot be longer than 10 characters." } } } -->
                 <input id="confirm_password" name="confirm_password" type="password" />
             </div>
         </div>

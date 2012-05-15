@@ -1,3 +1,11 @@
+3.2.5:
+ - Changed comment rule processing to require the normal format used on plugin init. Allowing comments to be placed anywhere, instead of above the field.
+3.2.4:
+ - Added a missing return to ValidateField function.
+3.2.3:
+ - Modified input change validation to not rely on depricated arguments.callee.caller.name, which was breaking IE in some scenarios.
+3.2.2:
+ - Changed the init fields add function to merge existing fields, in case fields are defines twice, their rules are combined.
 3.2.1:
  - Fixed a potential bug with processing rule messages that might be blank.
 3.2:
