@@ -5,26 +5,25 @@
     <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
     <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="jquery-ui-1.8.16.custom.min.js"></script>
-    <script type="text/javascript" src="..\jquery.microval.js"></script>
-    <script type="text/javascript" src="..\plugins\mv.inputhint.js"></script>
-    <script type="text/javascript" src="..\plugins\mv.inputsuccess.js"></script>
-    <script type="text/javascript" src="..\plugins\mv.inputmask.js"></script>
+    <script type="text/javascript" src="..\jquery.pliant.js"></script>
+    <script type="text/javascript" src="..\plugins\pl.inputhint.js"></script>
+    <script type="text/javascript" src="..\plugins\pl.inputmask.js"></script>
     <style type="text/css">
-        .mv-element-error {
+        .pl-element-error {
             color: red;
             font-weight: bold;
         }
-        .mv-input-error {
+        .pl-input-error {
             border: 1px solid red;
             background-color: #ffcccc;
         }
-        .mv-element-success {
+        .pl-element-success {
             color: #00CC66;
         }
-        .mv-input-success {
+        .pl-input-success {
             background-color: #00FF99;
         }
-        .mvHint {
+        .plHint {
             color: gray !important;
         }
     </style>
@@ -34,7 +33,7 @@
                 username = $('#username'),
                 password = $('#password'),
                 firstname = $('#FirstName'),
-                val = $('#signupForm').microval({
+                val = $('#signupForm').pliant({
                     appendRulesToFieldClass: true,
                     parseMarkup: true,
                     rules: {
@@ -52,7 +51,7 @@
                     },
                     plugins: {
                         inputmask: {
-                            emptyMaskClass: 'mvHint'
+                            emptyMaskClass: 'plHint'
                         },
                         inputhint: {}
                     },
@@ -85,6 +84,14 @@
                         {
                             field: username,
                             // chain: [password, datePick],
+                            // chain: { field: password, rules: ['length'] },
+                            // chain: password,
+                            // chain: [{ 
+                            //     field: password,
+                            //     rules: [ 'length' ]
+                            // }, {
+                            //     field: firstname
+                            // }],
                             rules: {
                                 required: {},
                                 mylength: {
