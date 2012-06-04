@@ -7,7 +7,17 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="stylesheets/cupertino/jquery-ui-1.8.20.custom.css">
+    <link rel="stylesheet" href="stylesheets/shCore.css">
+    <link rel="stylesheet" href="stylesheets/shThemeFadeToGrey.css">
     <script src="javascripts/scale.fix.js"></script>
+    <script src="javascripts/jquery-1.7.2.min.js"></script>
+    <script src="javascripts/jquery-ui-1.8.20.custom.min.js"></script>
+    <script src="javascripts/shCore.js"></script>
+    <script src="javascripts/shBrushJScript.js"></script>
+    <script src="javascripts/jquery.pliant.min.js"></script>
+    <script src="javascripts/pl.inputhint.min.js"></script>
+    <script src="javascripts/pl.inputmask.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
     <!--[if lt IE 9]>
@@ -22,14 +32,229 @@
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
+      $(function() {
+        $('#demoTabs').tabs();
+        SyntaxHighlighter.all();
+        $('#basicForm').pliant({
+          rules: {
+            date: {
+              message: 'Must be a valid date.',
+              validate: function() {
+                return /^\d{1,2}\/\d{1,2}\/\d{4}$/i.test(this.val());
+              }
+            }
+          },
+          fields: [
+            {
+              field: $('#basicName'),
+              rules: {
+                required: {}
+              }
+            },
+            {
+              field: $('#basicDOB'),
+              rules: {
+                required: {},
+                date: {}
+              }
+            },
+            {
+              field: $('#basicSSN'),
+              rules: {
+                required: {},
+                ssnformat: {
+                  message: 'Must be a valid SSN.',
+                  validate: function() {
+                    return /^\d{3}-\d{2}-\d{4}/.test(this.val());
+                  }
+                }
+              }
+            }
+          ]
+        });
+        $('#overrideForm').pliant({
+          rules: {
+            date: {
+              message: 'Must be a valid date.',
+              validate: function() {
+                return /^\d{1,2}\/\d{1,2}\/\d{4}$/i.test(this.val());
+              }
+            },
+            compare: {
+              message: 'Fields must match.',
+              shouldMatch: true,
+              compareTo: null,
+              validate: function(e) {
+                if (e.compareTo) {
+                  return e.shouldMatch === (this.val() === e.compareTo.val());
+                }
+                return false;
+              }
+            }
+          },
+          fields: [
+            {
+              field: $('#overrideName'),
+              rules: {
+                required: {
+                  message: 'Name is required.'
+                },
+                compare: {
+                  shouldMatch: false,
+                  message: 'Name cannot be the same as the SSN.',
+                  compareTo: $('#overrideSSN')
+                }
+              }
+            },
+            {
+              field: $('#overrideDOB'),
+              rules: {
+                required: {},
+                date: {
+                  message: 'Invalid date format.'
+                }
+              }
+            },
+            {
+              field: $('#overrideSSN'),
+              rules: {
+                required: {
+                  message: 'SSN is required.'
+                },
+                ssnformat: {
+                  message: 'Must be a valid SSN.',
+                  validate: function() {
+                    return /^\d{3}-\d{2}-\d{4}/.test(this.val());
+                  }
+                }
+              }
+            }
+          ]
+        });
+        $('#inheritForm').pliant({
+          rules: {
+            date: {
+              message: 'Must be a valid date.',
+              validate: function() {
+                return /^\d{1,2}\/\d{1,2}\/\d{4}$/i.test(this.val());
+              }
+            },
+            mylength: {
+              inherit: 'length',
+              message: 'Must be between 4 and 12 characters.',
+              min: 4, //The base length rule takes min/max properties, so define them here.
+              max: 12
+            }
+          },
+          fields: [
+            {
+              field: $('#inheritName'),
+              rules: {
+                required: {
+                  message: 'Name is required.'
+                },
+                mylength: {}
+              }
+            },
+            {
+              field: $('#inheritDOB'),
+              rules: {
+                required: {},
+                date: {
+                  message: 'Invalid date format.'
+                },
+                mylength: {}
+              }
+            },
+            {
+              field: $('#inheritSSN'),
+              rules: {
+                required: {
+                  message: 'SSN is required.'
+                },
+                ssnformat: {
+                  message: 'Must be a valid SSN.',
+                  validate: function() {
+                    return /^\d{3}-\d{2}-\d{4}/.test(this.val());
+                  }
+                },
+                mylength: {}
+              }
+            }
+          ]
+        });
+        $('#chainForm').pliant({
+          rules: {
+            compare: {
+              targetField: null,
+              message: 'Fields must match.',
+              validate: function(e) {
+                if (e.targetField) {
+                  if (e.targetField.val().length == 0 || this.val().length == 0) {
+                    return true;
+                  }
+                  return this.val() === e.targetField.val();
+                }
+                return false;
+              }
+            }
+          },
+          fields: [
+            {
+              field: $('#chainName'),
+              rules: {
+                required: {
+                  message: 'Name is required.'
+                }
+              }
+            },
+            {
+              field: $('#chainPassword'),
+              chain: {
+                field: $('#chainConfirmPassword'),
+                rules: ['compare']
+              },
+              rules: {
+                required: {},
+                compare: {
+                  targetField: $('#chainConfirmPassword'),
+                  message: 'Must match your confirmation password.'
+                }
+              }
+            },
+            {
+              field: $('#chainConfirmPassword'),
+              chain: {
+                field: $('#chainPassword'),
+                rules: ['compare']
+              },
+              rules: {
+                required: {},
+                compare: {
+                  targetField: $('#chainPassword'),
+                  message: 'Must match your password.'
+                }
+              }
+            }
+          ]
+        });
+        var commentPl = $('#htmlForm').pliant({
+            parseMarkup: true
+        });
+        $('#commentAddField').one('click', function() {
+          $('#htmlPL').append('<!-- { "field": "#dynamicField", "rules": {"required": {"message": "Dynamic field required!"}}} --><label>Dynamic:</label><input id="dynamicField" type="text" />');
+          commentPl.AddMarkupRules();
+          $(this).hide();
+        });
+      });
     </script>
   </head>
   <body>
     <div class="wrapper">
       <header>
         <h1>Pliant</h1>
-        <p style="font-size: 1.1em;">
-          A flixible and extensible jQuery validation plugin with easy rule overriding/extending.
+        <p>
+          A flexible and extensible jQuery validation plugin.
         </p>
         <p class="view"><a href="https://github.com/PortableSheep/Pliant">View the Project on GitHub <small>PortableSheep/Pliant</small></a></p>
         <ul>
@@ -57,12 +282,381 @@
             <li>Control field validation on change globally, or per field/rule based on a bool or function result.</li>
             <li>Extensible via plugins.</li>
         </ul>
-        <h3>Demo</h3>
+        <h3>Documentation</h3>
         <p>
-          Coming soon!
+          <a href="https://github.com/PortableSheep/Pliant/wiki">You can find more documentation by clicking here.</a>
         </p>
+        <h3>Demo</h3>
+        <div id="demoTabs" style="font-size: .8em; margin-bottom: 20px;">
+          <ul>
+            <li><a href="#basic">Basic Usage</a></li>
+            <li><a href="#overrides">Overrides/Custom</a></li>
+            <li><a href="#inheritance">Inheritance</a></li>
+            <li><a href="#chaining">Chaining</a></li>
+            <li><a href="#markupRules">Markup Rules</a></li>
+            <li><a href="#masking">Masking</a></li>
+            <li><a href="#hinting">Hinting</a></li>
+          </ul>
+          <div id="basic">
+            <p>
+              We've defined a custom rule called "date", which any field can use.<br /><br /> We also defined a "one off" rule called "ssnformat", that only the SSN field can use, since it's defined in the fields definition.
+            </p>
+            <form id="basicForm" method="get">
+              <div>
+                <label>Name:</label><input type="text" id="basicName">
+              </div>
+              <div>
+                <label>Birthdate:</label><input type="text" id="basicDOB">
+              </div>
+              <div>
+                <label>SSN:</label><input type="text" id="basicSSN">
+              </div>
+              <div>
+                <input id="basicSubmit" type="submit" value="Submit" />
+              </div>
+            </form>
+            <br />
+            <h3>Code</h3>
+            <hr style="margin-top: -14px;" />
+            <script type="syntaxhighlighter" class="brush: js">
+<![CDATA[
+$('#basicForm').pliant({
+  rules: {
+    date: {
+      message: 'Must be a valid date.',
+      validate: function() {
+        return /^\d{1,2}\/\d{1,2}\/\d{4}$/i.test(this.val());
+      }
+    }
+  },
+  fields: [
+    {
+      field: $('#basicName'),
+      rules: {
+        required: {}
+      }
+    },
+    {
+      field: $('#basicDOB'),
+      rules: {
+        required: {},
+        date: {}
+      }
+    },
+    {
+      field: $('#basicSSN'),
+      rules: {
+        required: {},
+        ssnformat: {
+          message: 'Must be a valid SSN.',
+          validate: function() {
+            return /^\d{3}-\d{2}-\d{4}/.test(this.val());
+          }
+        }
+      }
+    }
+  ]
+});
+]]>
+            </script>
+          </div>
+          <div id="overrides">
+            <p>
+              Building on the first example, we've simply overridden the default messages for some rules. You can override any property in a defined rule, including the validate function.<br /><br />
+              A new rule called "compare" was also added. You can see that it makes use of "shouldMatch" and "compareTo" properties that each field using it can specify.
+            </p>
+            <form id="overrideForm" method="get">
+              <div>
+                <label>Name:</label><input type="text" id="overrideName">
+              </div>
+              <div>
+                <label>Birthdate:</label><input type="text" id="overrideDOB">
+              </div>
+              <div>
+                <label>SSN:</label><input type="text" id="overrideSSN">
+              </div>
+              <div>
+                <input type="submit" value="Submit" />
+              </div>
+            </form>
+            <br />
+            <h3>Code</h3>
+            <hr style="margin-top: -14px;" />
+            <script type="syntaxhighlighter" class="brush: js">
+<![CDATA[
+$('#overrideForm').pliant({
+  rules: {
+    date: {
+      message: 'Must be a valid date.',
+      validate: function() {
+        return /^\d{1,2}\/\d{1,2}\/\d{4}$/i.test(this.val());
+      }
+    },
+    compare: {
+      message: 'Fields must match.',
+      shouldMatch: true,
+      compareTo: null,
+      validate: function(e) {
+        if (e.compareTo) {
+          return e.shouldMatch === (this.val() === e.compareTo.val());
+        }
+        return false;
+      }
+    }
+  },
+  fields: [
+    {
+      field: $('#overrideName'),
+      rules: {
+        required: {
+          message: 'Name is required.'
+        },
+        compare: {
+          shouldMatch: false,
+          message: 'Name cannot be the same as the SSN.',
+          compareTo: $('#overrideSSN')
+        }
+      }
+    },
+    {
+      field: $('#overrideDOB'),
+      rules: {
+        required: {},
+        date: {
+          message: 'Invalid date format.'
+        }
+      }
+    },
+    {
+      field: $('#overrideSSN'),
+      rules: {
+        required: {
+          message: 'SSN is required.'
+        },
+        ssnformat: {
+          message: 'Must be a valid SSN.',
+          validate: function() {
+            return /^\d{3}-\d{2}-\d{4}/.test(this.val());
+          }
+        }
+      }
+    }
+  ]
+});
+]]>
+            </script>
+          </div>
+          <div id="inheritance">
+            <p>
+              Built into Pliant, is the <b>"length"</b> rule. What we've done is create out own rule called "mylength", which inherits from the built in "length" rule.<br /><br />
+              The purpose of this would be if you want to use a custom rule for multiple fields, but don't want to override the properties of the rule multiple times since they're all the same.
+            </p>
+            <form id="inheritForm" method="get">
+              <div>
+                <label>Name:</label><input type="text" id="inheritName">
+              </div>
+              <div>
+                <label>Birthdate:</label><input type="text" id="inheritDOB">
+              </div>
+              <div>
+                <label>SSN:</label><input type="text" id="inheritSSN">
+              </div>
+              <div>
+                <input type="submit" value="Submit" />
+              </div>
+            </form>
+            <br />
+            <h3>Code</h3>
+            <hr style="margin-top: -14px;" />
+            <script type="syntaxhighlighter" class="brush: js">
+<![CDATA[
+$('#inheritForm').pliant({
+  rules: {
+    date: {
+      message: 'Must be a valid date.',
+      validate: function() {
+        return /^\d{1,2}\/\d{1,2}\/\d{4}$/i.test(this.val());
+      }
+    },
+    mylength: {
+      inherit: 'length',
+      message: 'Must be between 4 and 12 characters.',
+      min: 4, //The base length rule takes min/max properties, so define them here.
+      max: 12
+    }
+  },
+  fields: [
+    {
+      field: $('#inheritName'),
+      rules: {
+        required: {
+          message: 'Name is required.'
+        },
+        mylength: {}
+      }
+    },
+    {
+      field: $('#inheritDOB'),
+      rules: {
+        required: {},
+        date: {
+          message: 'Invalid date format.'
+        },
+        mylength: {}
+      }
+    },
+    {
+      field: $('#inheritSSN'),
+      rules: {
+        required: {
+          message: 'SSN is required.'
+        },
+        ssnformat: {
+          message: 'Must be a valid SSN.',
+          validate: function() {
+            return /^\d{3}-\d{2}-\d{4}/.test(this.val());
+          }
+        },
+        mylength: {}
+      }
+    }
+  ]
+});
+]]>
+            </script>
+          </div>
+          <div id="chaining">
+            <p>
+              Chaining simply lets you trigger validation for other specific fields, when you validation occurs for another.<br /><br />
+              In this example, we're using it to trigger comparison validation for both password fields. We're actually only chaining specific rules in this example, but you can also chain it to validate all rules or multiple fields if you want.<br /><br />
+              Enter two mismatched passwords, and then correct either of the two fields. You'll notice that their comparison validation triggers for both.
+            </p>
+            <form id="chainForm" method="get">
+              <div>
+                <label>Name:</label><input type="text" id="chainName">
+              </div>
+              <div>
+                <label>Password:</label><input type="password" id="chainPassword">
+              </div>
+              <div>
+                <label>Confirm Password:</label><input type="password" id="chainConfirmPassword">
+              </div>
+              <div>
+                <input type="submit" value="Submit" />
+              </div>
+            </form>
+            <br />
+            <h3>Code</h3>
+            <hr style="margin-top: -14px;" />
+            <script type="syntaxhighlighter" class="brush: js">
+<![CDATA[
+$('#chainForm').pliant({
+  rules: {
+    compare: {
+      targetField: null,
+      message: 'Fields must match.',
+      validate: function(e) {
+        if (e.targetField) {
+          if (e.targetField.val().length == 0 || this.val().length == 0) {
+            return true;
+          }
+          return this.val() === e.targetField.val();
+        }
+        return false;
+      }
+    }
+  },
+  fields: [
+    {
+      field: $('#chainName'),
+      rules: {
+        required: {
+          message: 'Name is required.'
+        }
+      }
+    },
+    {
+      field: $('#chainPassword'),
+      chain: {
+        field: $('#chainConfirmPassword'),
+        rules: ['compare']
+      },
+      rules: {
+        required: {},
+        compare: {
+          targetField: $('#chainConfirmPassword'),
+          message: 'Must match your confirmation password.'
+        }
+      }
+    },
+    {
+      field: $('#chainConfirmPassword'),
+      chain: {
+        field: $('#chainPassword'),
+        rules: ['compare']
+      },
+      rules: {
+        required: {},
+        compare: {
+          targetField: $('#chainPassword'),
+          message: 'Must match your password.'
+        }
+      }
+    }
+  ]
+});
+]]>
+            </script>
+          </div>
+          <div id="markupRules">
+            <p>
+              Markup rules is a way to add basic validation to fields by using HTML comments. This can be useful if you're dynamically adding content, and you want the content to have validation defined in itself.<br /><br />The comments themselves are stringified JSON, and are the same format using everywhere else in Pliant. You can define them anywhere on the page, so long as that place is in the scope you've selected when instantiating Pliant.
+              <br /><br />
+              Setting the "parseMarkup" to true, causes the initial scrape of any HTML comments, and calling the "AddMarkupRules" function scrapes and adds any new HTML comment rules after init.
+            </p>
+            <form id="htmlForm" method="get">
+              <div>
+                <label>Name:</label><input type="text" id="htmlName">
+              </div>
+              <div id="htmlPL"></div>
+              <div>
+                <input id="commentAddField" type="button" value="Add New Field" /> <input type="submit" value="Submit" />
+              </div>
+              <!-- { "field": "#htmlName", "rules": { "required": { "message": "Name is required." } } } -->
+            </form>
+            <br />
+            <h3>HTML Comment</h3>
+            <script type="syntaxhighlighter" class="brush: js">
+              <![CDATA[
+                <!-- 
+                  { "field": "#htmlName", "rules": { "required": { "message": "Name is required." } } } 
+                -->
+              ]]>
+            </script>
+            <h3>Code</h3>
+            <hr style="margin-top: -14px;" />
+            <script type="syntaxhighlighter" class="brush: js">
+<![CDATA[
+var commentPl = $('#htmlForm').pliant({
+    parseMarkup: true
+});
+$('#commentAddField').one('click', function() {
+  $('#htmlPL').append('<!-- { "field": "#dynamicField", "rules": {"required": {"message": "Dynamic field required!"}}} --><label>Dynamic:</label><input id="dynamicField" type="text" />');
+  commentPl.AddMarkupRules();
+  $(this).hide();
+});
+]]>
+            </script>
+          </div>
+          <div id="masking">
+            Coming soon!
+          </div>
+          <div id="hinting">
+            Coming soon!
+          </div>
+        </div>
         <h3>Support or Contact</h3>
-        <p>
+        <p style="text-align: center;">
           You can email me at <a href="mailto:mgunderson@portablesheep.com">mgunderson@portablesheep.com</a>, or submit an issue <a href="https://github.com/PortableSheep/Pliant/issues">by clicking here</a>.
         </p>
       </section>

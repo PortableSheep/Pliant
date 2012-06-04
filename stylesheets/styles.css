@@ -81,9 +81,9 @@ header.without-description h1 {
 }
 header p {
   margin: 0;
-  color: #61778B;
-  width: 300px;
-  font-size: 13px;
+  color: #333;
+  width: 500px;
+  font-size: 1.2em;
 }
 header p.view {
   display: none;
@@ -157,9 +157,8 @@ header ul li + li + li {
 }
 header ul a {
   line-height: 1;
-  font-size: 11px;
+  font-size: 13px;
   color: #fff;
-  color: rgba(255, 255, 255, 0.8);
   display: block;
   text-align: center;
   font-weight: 400;
@@ -240,10 +239,10 @@ code, pre {
 }
 
 pre {
-  padding: 20px;
+  padding: 6px;
   background: #3A3C42;
   color: #f8f8f2;
-  margin: 0 -20px 20px;
+  margin: 0 -14px 0;
 }
 pre code {
   color: #f8f8f2;
@@ -353,4 +352,26 @@ footer p + p {
   header p.view a small:before {
     content: 'at http://github.com/';
   }
+}
+
+.pl-element-error {
+    color: red;
+    font-weight: bold;
+}
+.pl-input-error {
+    border: 1px solid red;
+    background-color: #ffcccc;
+}
+.pl-element-success {
+    color: #00CC66;
+}
+.pl-input-success {
+    background-color: #00FF99;
+}
+.plHint {
+    color: gray !important;
+}
+form div > label:first-child {
+  width: 80px;
+  float: left;
 }
