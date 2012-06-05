@@ -375,3 +375,6 @@ form div > label:first-child {
   width: 80px;
   float: left;
 }
+.plinputmask {
+  color: #999;
+}
