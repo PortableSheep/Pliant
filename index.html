@@ -267,11 +267,10 @@
         <h3>Features</h3>
         <ul>
             <li>Central, or field specific rule definitions.</li>
-            <li>Rule inheritance.</li>
-            <li>Rule property overriding.</li>
-            <li>Validate on field change.</li>
+            <li>Rule inheritance and property overriding.</li>
+            <li>Validation on field change.</li>
             <li>Field/Rule validation chaining.</li>
-            <li>Define validation on init, after init, or via HTML comments.</li>
+            <li>Apply validation on init, after init, or via HTML comments.</li>
             <li>Control field/rule message locations globally, or per field/rule instance.</li>
             <li>Control the form validation trigger, and scope.</li>
             <li>Stop validation on first invalid rule per field, or validate all rules per field.</li>
@@ -289,6 +288,7 @@
         <h3>Demo</h3>
         <div id="demoTabs" style="font-size: .8em; margin-bottom: 20px;">
           <ul>
+            <li><a href="#options">Options</a></li>
             <li><a href="#basic">Basic Usage</a></li>
             <li><a href="#overrides">Overrides/Custom</a></li>
             <li><a href="#inheritance">Inheritance</a></li>
@@ -297,6 +297,274 @@
             <li><a href="#masking">Masking</a></li>
             <li><a href="#hinting">Hinting</a></li>
           </ul>
+          <div id="options">
+            <p>
+              Below is a list of all available options. For more details about options, or events, check out the wiki.
+            </p>
+            <table>
+              <tr>
+                <th>
+                  Name
+                </th>
+                <th>
+                  Default
+                </th>
+                <th>
+                  Description
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <strong>appendRulesToFieldClass</strong>
+                </td>
+                <td>
+                  false
+                </td>
+                <td>
+                  If true, rule names will be appended to the fields class. When rules are enabled/disabled via method calls, these will stay in sync.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>reconcileFieldOrder</strong>
+                </td>
+                <td>
+                  false
+                </td>
+                <td>
+                  If true, the fields will be validated in the order they appear on the form, instead of the order they're added to Pliant.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>haltOnFirstInvalidRule</strong>
+                </td>
+                <td>
+                  true
+                </td>
+                <td>
+                  If true, validation for each field will halt on the first invalid rule.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>hideMessageContainerOnLoad</strong>
+                </td>
+                <td>
+                  true
+                </td>
+                <td>
+                  If true, hide the shared message container on load if one is defined.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>validateOnFieldChange</strong>
+                </td>
+                <td>
+                  true
+                </td>
+                <td>
+                  If true, validation will trigger on field change, unless the field overrides the behaviour via its <strong><i>validateOnChange</i></strong> options.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>focusFirstInvalidField</strong>
+                </td>
+                <td>
+                  false
+                </td>
+                <td>
+                  If true, the first invalid field will gain focus. You can handle the focus yourself by handling the <strong><i>onInvalidFieldFocus</i></strong> event.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>ignoreHidden</strong>
+                </td>
+                <td>
+                  true
+                </td>
+                <td>
+                  If true, any field not visible during validation will be ignored.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>ignoreDisabled</strong>
+                </td>
+                <td>
+                  true
+                </td>
+                <td>
+                  If true, any field that's disabled during validation will be ignored.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>validateSubmit</strong>
+                </td>
+                <td>
+                  true
+                </td>
+                <td>
+                  If true, the validation will attempt to trigger automatically on form submission, assuming the instance scope is a form.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>validateSubmitSelector</strong>
+                </td>
+                <td>
+                  NULL
+                </td>
+                <td>
+                  If set, validation on submission will only be triggered by elements returned by the selector. By default, any 'form' submission will be validated if <strong><i>validateSubmit</i></strong> is enabled, and the scope of the plugin is a form.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>validateSubmitOn</strong>
+                </td>
+                <td>
+                  'click'
+                </td>
+                <td>
+                  The event to subscribe to for elements returned by the <strong><i>validateSubmitSelector</i></strong> option.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>validateSubmitScope</strong>
+                </td>
+                <td>
+                  NULL
+                </td>
+                <td>
+                  The selector to use for the scope when binding the <strong><i>validateSubmitSelector</i></strong>. If NULL, the selector/scope used when invoking the plugin is used.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>inputSelector</strong>
+                </td>
+                <td>
+                  ':input[type!=button]'
+                </td>
+                <td>
+                  The default jQuery selector for finding fields when the <strong><i>reconcileFieldOrder</i></strong> option is enabled.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                 <strong>parseMarkup</strong>
+                </td>
+                <td>
+                  false
+                </td>
+                <td>
+                  If true, Pliant will automatically find any HTML comments in the JSON format, and try to automatically parse them for field validation.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>messageElement</strong>
+                </td>
+                <td>
+                    '&lt;label /&gt;'
+                </td>
+                <td>The default element to wrap around error message text.</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>messageWrap</strong>
+                </td>
+                <td>
+                  NULL
+                </td>
+                <td>
+                  The element to wrap around the <strong><i>messageElement</i></strong>.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>messageContainer</strong>
+                </td>
+                <td>
+                  NULL
+                </td>
+                <td>
+                  The jQuery object of an HTML element to stick all validation messages in.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>messageElementClass</strong>
+                </td>
+                <td>
+                  'pl-element-error'
+                </td>
+                <td>
+                  The default CSS class applied to validation message elements.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>messageWrapClass</strong>
+                </td>
+                <td>
+                  'pl-wrap-error'
+                </td>
+                <td>The default CSS class applied to validation message wrappers.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>inputClass</strong>
+                </td>
+                <td>
+                  'pl-input-error'
+                </td>
+                <td>
+                  The default CSS class applied to invalid input fields.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>plugins</strong>
+                </td>
+                <td>
+                  NULL
+                </td>
+                <td>
+                  See the WIKI documentation for plugin information.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>rules</strong>
+                </td>
+                <td>
+                  See Docs.
+                </td>
+                <td>
+                  A literal object containing validation rules. See the WIKI documentation for more information.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>fields</strong>
+                </td>
+                <td>
+                  See Docs.
+                </td>
+                <td>
+                  An array of fields to validate. Fields are validated in the order they're added, unless you enabled the <strong><i>reconcileFieldOrder</i></strong> option.
+                </td>
+              </tr>
+            </table>
+          </div>
           <div id="basic">
             <p>
               We've defined a custom rule called "date", which any field can use.<br /><br /> We also defined a "one off" rule called "ssnformat", that only the SSN field can use, since it's defined in the fields definition.
