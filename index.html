@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html>
   <head>
@@ -917,10 +918,161 @@ $('#commentAddField').one('click', function() {
             </script>
           </div>
           <div id="masking">
-            Coming soon!
+            <p>
+              This is an example of the Pliant input masking plugin. This was created because normal masking plugins are difficult to use with Pliant due to them usually controlling events relied upon for validation.<br /><br />This is a basic example, showing a date, URL, phone w/optional extension, and SSN mask. Masks can be shown on field focus, or always be shown.<br /><br />
+              Notice that the date, and SSN masks only show on field focus, while the others are static.
+            </p>
+            <form id="maskForm" method="get">
+              <div>
+                <label>URL:</label><input type="text" id="maskURL" />
+              </div>
+              <div>
+                <label>Date:</label><input type="text" id="maskDate" />
+              </div>
+              <div>
+                <label>SSN:</label><input type="text" id="maskSSN" />
+              </div>
+              <div>
+                <label>Phone:</label><input type="text" id="maskPhone" />
+              </div>
+              <div>
+                <input type="submit" value="Submit" />
+              </div>
+            </form>
+            <br />
+            <h3>Code</h3>
+            <hr style="margin-top: -14px;" />
+            <p>
+              You can see from the code, you can define the rule, placeholder, and focus option. Notice that a number inside curly braces indicates how many times to repeat the mask character before it. Also notice the "?" character in the phone mask; where it indicates that everything to the right of it is optional. The mask to use is defined in the field definition.<br /><br />The definitions shown are built in to the plugin by default, and are only shown as an example for adding your own.
+            </p>
+            <script type="syntaxhighlighter" class="brush: js">
+<![CDATA[
+$('#maskForm').pliant({
+    plugins: {
+      inputmask: {
+        definitions: {
+            '9': '[0-9]',
+            'a': '[A-Za-z]',
+            'A': '[A-Za-z0-9]',
+            '*': '[A-Za-z0-9_\/-]'
+        },
+        masks: {
+          phoneWithExt: { rule: '(9{3}) 9{3}-9{4}? x9{5}', placeholder: '_', maskOnFocus: false },
+          date: { rule: '9{2}/9{2}/9{4}', placeholder: '_', maskOnFocus: true },
+          url: { rule: 'http://*{512}', placeholder: '', maskOnFocus: false },
+          ssn: { rule: '9{3}-9{2}-9{4}', placeholder: '_', maskOnFocus: true }
+        }
+      }
+    },
+    fields: [
+      {
+        field: $('#maskURL'),
+        mask: 'url',
+        rules: {
+          required: {}
+        }
+      },
+      {
+        field: $('#maskDate'),
+        mask: 'date',
+        rules: {
+          required: {}
+        }
+      },
+      {
+        field: $('#maskSSN'),
+        mask: 'ssn',
+        rules: {
+          required: {}
+        }
+      },
+      {
+        field: $('#maskPhone'),
+        mask: 'phone',
+        rules: {
+          required: {}
+        }
+      }
+    ]
+});
+]]>
+            </script>
           </div>
           <div id="hinting">
-            Coming soon!
+            <p>
+              This is an example of the Pliant input hinting plugin. The hint plugin supports text boxes, and password boxes. You would generally use this to give the user a hint as to what the field is for, which is useful if you don't want separate labels in your forms.
+            </p>
+            <form id="hintForm" method="get">
+              <div>
+                <input type="text" id="hintURL" />
+              </div>
+              <div>
+                <input type="text" id="hintDate" />
+              </div>
+              <div>
+                <input type="text" id="hintSSN" />
+              </div>
+              <div>
+                <input type="text" id="hintPhone" />
+              </div>
+              <div>
+                <input type="password" id="hintPass" />
+              </div>
+              <div>
+                <input type="submit" value="Submit" />
+              </div>
+            </form>
+            <br />
+            <h3>Code</h3>
+            <hr style="margin-top: -14px;" />
+            <p>
+            </p>
+            <script type="syntaxhighlighter" class="brush: js">
+<![CDATA[
+$('#hintForm').pliant({
+    plugins: {
+      inputhint: {}
+    },
+    fields: [
+      {
+        field: $('#hintURL'),
+        hintText: 'Your website URL',
+        rules: {
+          required: {}
+        }
+      },
+      {
+        field: $('#hintDate'),
+        hintText: 'Birthdate',
+        rules: {
+          required: {}
+        }
+      },
+      {
+        field: $('#hintPass'),
+        hintText: 'Password',
+        rules: {
+          required: {}
+        }
+      },
+      {
+        field: $('#hintSSN'),
+        hintText: 'SSN',
+        rules: {
+          required: {}
+        }
+      },
+      {
+        field: $('#hintPhone'),
+        hintText: 'Phone number',
+        rules: {
+          required: {}
+        }
+      }
+    ]
+});
+]]>
+            </script>
           </div>
         </div>
         <h3>Support or Contact</h3>
