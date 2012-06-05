@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!doctype html>
 <html>
   <head>
@@ -246,6 +245,96 @@
           $('#htmlPL').append('<!-- { "field": "#dynamicField", "rules": {"required": {"message": "Dynamic field required!"}}} --><label>Dynamic:</label><input id="dynamicField" type="text" />');
           commentPl.AddMarkupRules();
           $(this).hide();
+        });
+        $('#maskForm').pliant({
+            plugins: {
+              inputmask: {
+                definitions: {
+                    '9': '[0-9]',
+                    'a': '[A-Za-z]',
+                    'A': '[A-Za-z0-9]',
+                    '*': '[A-Za-z0-9_\/-]'
+                },
+                masks: {
+                  phoneWithExt: { rule: '(9{3}) 9{3}-9{4}? x9{5}', placeholder: '_', maskOnFocus: false },
+                  date: { rule: '9{2}/9{2}/9{4}', placeholder: '_', maskOnFocus: true },
+                  url: { rule: 'http://*{512}', placeholder: '', maskOnFocus: false },
+                  ssn: { rule: '9{3}-9{2}-9{4}', placeholder: '_', maskOnFocus: true }
+                }
+              }
+            },
+            fields: [
+              {
+                field: $('#maskURL'),
+                mask: 'url',
+                rules: {
+                  required: {}
+                }
+              },
+              {
+                field: $('#maskDate'),
+                mask: 'date',
+                rules: {
+                  required: {}
+                }
+              },
+              {
+                field: $('#maskSSN'),
+                mask: 'ssn',
+                rules: {
+                  required: {}
+                }
+              },
+              {
+                field: $('#maskPhone'),
+                mask: 'phoneWithExt',
+                rules: {
+                  required: {}
+                }
+              }
+            ]
+        });
+        $('#hintForm').pliant({
+            plugins: {
+              inputhint: {}
+            },
+            fields: [
+              {
+                field: $('#hintURL'),
+                hintText: 'Your website URL',
+                rules: {
+                  required: {}
+                }
+              },
+              {
+                field: $('#hintDate'),
+                hintText: 'Birthdate',
+                rules: {
+                  required: {}
+                }
+              },
+              {
+                field: $('#hintPass'),
+                hintText: 'Password',
+                rules: {
+                  required: {}
+                }
+              },
+              {
+                field: $('#hintSSN'),
+                hintText: 'SSN',
+                rules: {
+                  required: {}
+                }
+              },
+              {
+                field: $('#hintPhone'),
+                hintText: 'Phone number',
+                rules: {
+                  required: {}
+                }
+              }
+            ]
         });
       });
     </script>
@@ -933,7 +1022,7 @@ $('#commentAddField').one('click', function() {
                 <label>SSN:</label><input type="text" id="maskSSN" />
               </div>
               <div>
-                <label>Phone:</label><input type="text" id="maskPhone" />
+                <label>Phone:</label><input type="text" id="maskPhone" style="width: 150px;" />
               </div>
               <div>
                 <input type="submit" value="Submit" />
@@ -988,7 +1077,7 @@ $('#maskForm').pliant({
       },
       {
         field: $('#maskPhone'),
-        mask: 'phone',
+        mask: 'phoneWithExt',
         rules: {
           required: {}
         }
