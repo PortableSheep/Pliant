@@ -1,0 +1,38 @@
+{
+	"name": "jquery.pliant",
+	"version": "3.4.1",
+	"title": "jQuery.pliant() - Flexible validation.",
+	"author": {
+		"name": "Michael Gunderson",
+		"url": "https://github.com/PortableSheep"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "MIT-LICENSE.txt"
+		},
+		{
+			"type": "GPLv2",
+			"url": "GPL-LICENSE.txt"
+		}
+	],
+	"jquery": {
+		"dependencies": {
+			"jquery": "1.6.x"
+		}
+	},
+	"description": "A very flexible forms validation plugin, that's also extensible.",
+	"keywords": [
+		"validate",
+		"validation",
+		"forms",
+		"valid"
+	],
+	"homepage": "http://portablesheep.github.com/Pliant/",
+	"maintainers": [
+		{
+			"name": "Michael Gunderson",
+			"url": "https://github.com/PortableSheep"
+		}
+	]
+}
