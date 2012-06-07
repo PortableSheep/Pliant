@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v3.4.1 - http://bitbucket.org/rushtheweb/pliant/
+ * Pliant jQuery plugin v3.4.1 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
