@@ -95,7 +95,9 @@ Pliant Change Log
     * Rmoved fieldIndicator feature, and replaced it with the onFieldAdded event since it can be used to acheive the same, and is more flexible.
 * **2.1**
     * Added ability to disable/enable validation on field change via 'validateOnChange' option in the field definition.
+
 - - -
+
 InputMask Change Log
 ---------------------
 * **1.2**
