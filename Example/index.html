@@ -51,7 +51,10 @@
                     },
                     plugins: {
                         inputmask: {
-                            emptyMaskClass: 'plHint'
+                            emptyMaskClass: 'plHint',
+                            masks: {
+                                date: { maskOnFocus: false }
+                            }
                         },
                         inputhint: {}
                     },

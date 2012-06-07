@@ -1,4 +1,4 @@
-/*! v1.1 */
+/*! v1.2 */
 (function($) {
     $.pliantPlugins.inputmask = function(o, plInst) {
         var opt = $.extend(true, {
@@ -255,6 +255,16 @@
                     }
                     if (val === mObj.string) {
                         $this.addClass(opt.emptyMaskClass);
+                    }
+                }).on('change.mvinputmask', function() {
+                    var val = $(this).val();
+                    if (val === mObj.string) {
+                        fObj.field.addClass(opt.emptyMaskClass);
+                    } else {
+                        fObj.field.removeClass(opt.emptyMaskClass);
+                        if (mObj.optionalIndex > -1 && val !== mObj.string) {
+                            removeOptionalMask(mObj, fObj.field.val());
+                        }
                     }
                 });
                 //Check if we need to apply the mask, and remove the optional masking if needed.
