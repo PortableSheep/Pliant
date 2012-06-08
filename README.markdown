@@ -9,6 +9,10 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **3.4.2**
+    * Converted rules to actual objects.
+    * Added "SetMessage" function to the rule object prototype, which immediately changed that rules message content.
+    * Changed rule validation to detect if the default message was changed, and restore the original before validation.
 * **3.4.1**
     * Added new "expectedResult" option for rules. This allows rules to control the validation result for the rule in custom scenarios.
 * **3.4.0**

@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v3.4.1 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v3.4.2 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
@@ -67,6 +67,11 @@
                 }
             }
         },
+        _resetRuleMessage = function(rObj) {
+            if (rObj && rObj._origMsg && rObj.message[0].innerHTML !== rObj._origMsg) {
+                rObj.message.html(rObj._origMsg);
+            }
+        },
         _refreshState = function() {
             _invalidCount = 0;
             var msgSel = '.'+opt.messageElementClass;
@@ -109,34 +114,36 @@
                 }
             }
         },
-        _prepRules = function(obj) {
-            for(var i in obj.rules) {
-                var rule = obj.rules[i], parentRule = opt.rules[i], inheritedRule = (parentRule && parentRule.inherit && opt.rules[parentRule.inherit] ? opt.rules[parentRule.inherit] : null);
-                if ((rule.message === undefined || (rule.validate !== undefined && !(rule.validate instanceof Function))) && !parentRule) {
-                    throw 'Rule `' + i + '` is invalid.';
+        _ruleObject = function(fObj, name, obj) {
+            for(var i in obj) {
+                this[i] = obj[i];
+            }
+            var parentRule = opt.rules[name], inheritedRule = (parentRule && parentRule.inherit && opt.rules[parentRule.inherit] ? opt.rules[parentRule.inherit] : null);
+            if ((this.message === undefined || (this.validate !== undefined && !(this.validate instanceof Function))) && !parentRule) {
+                throw 'Rule `' + name + '` is invalid.';
+            }
+            if (parentRule || this.hasOwnProperty('message')) {
+                _extendRule(this, parentRule);
+                _extendRule(this, inheritedRule);
+                this._origMsg = this.message;
+                this.message = $(opt.messageElement).addClass(opt.messageElementClass).append(this.message);
+                if (opt.messageWrap) {
+                    this.message = $(opt.messageWrap).addClass(opt.messageWrapClass).append(this.message);
                 }
-                if (parentRule || rule.hasOwnProperty('message')) {
-                    _extendRule(rule, parentRule);
-                    _extendRule(rule, inheritedRule);
-                    rule.message = $(opt.messageElement).addClass(opt.messageElementClass).append(rule.message);
-                    if (opt.messageWrap) {
-                        rule.message = $(opt.messageWrap).addClass(opt.messageWrapClass).append(rule.message);
-                    }
-                    rule.message.hide();
-                    if (opt.onMessagePlacement) {
-                        _trigger('onMessagePlacement', obj.field, [rule.message]);
-                    } else if (rule.container) {
-                        $(rule.container).append(rule.message);
-                    } else if (obj.container) {
-                        $(obj.container).append(rule.message);
-                    } else if (opt.messageContainer) {
-                        opt.messageContainer.append(rule.message);
-                    } else {
-                        obj.field.after(rule.message);
-                    }
-                    if (opt.appendRulesToFieldClass) {
-                        obj.field.addClass(i);
-                    }
+                this.message.hide();
+                if (opt.onMessagePlacement) {
+                    _trigger('onMessagePlacement', fObj.field, [this.message]);
+                } else if (this.container) {
+                    $(this.container).append(this.message);
+                } else if (fObj.container) {
+                    $(fObj.container).append(this.message);
+                } else if (opt.messageContainer) {
+                    opt.messageContainer.append(this.message);
+                } else {
+                    fObj.field.after(this.message);
+                }
+                if (opt.appendRulesToFieldClass) {
+                    fObj.field.addClass(name);
                 }
             }
         },
@@ -144,7 +151,9 @@
             var fInst = this;
             this.isValid = true, this.isEnabled = true, this.isValidPrev = true;
             for(var i in obj) {
-                this[i] = obj[i];
+                if (i !== 'rules') {
+                    this[i] = obj[i];
+                }
             }
             if (obj.validateOnChange || opt.validateOnFieldChange && obj.validateOnChange !== false) {
                 this.field.on('change.pliant', function(){
@@ -154,7 +163,11 @@
             if (this.container) {
                 this.container.hide();
             }
-            _prepRules(obj);
+            var rules = {};
+            for(var i in obj.rules) {
+                rules[i] = new _ruleObject(this, i, obj.rules[i]);
+            }
+            this.rules = rules;
             _trigger('onFieldAdded', this.field, [this]);
         },
         _addField = function(fieldObj) {
@@ -294,6 +307,11 @@
                 return _fields[fIndex].Validate(null, true, true, false, fRules);
             }
         };
+        _ruleObject.prototype.SetMessage = function(msg) {
+            if (msg.length > 0) {
+                this.message.html(msg);
+            }
+        };
         _fieldObject.prototype.Validate = function(data, refreshState, fromChain, fromChange, ruleFilter) {
             this.isValidPrev = this.isValid;
             this.isValid = true;
@@ -314,6 +332,7 @@
                         if (opt.haltOnFirstInvalidRule && !this.isValid) {
                             break;
                         }
+                        _resetRuleMessage(rule);
                         var callArgs = (data ? $.merge([rule], data) : [rule]), valRet = rule.validate ? rule.validate.apply(this.field, callArgs) : true;
                         this.isValid &= rule.isValid = (rule.expectedResult ? (valRet === rule.expectedResult) : Boolean(valRet));
                     }
@@ -351,10 +370,11 @@
                         for(var name in fieldObj.rules) {
                             if (_fields[i].rules[name]) {
                                 _fields[i].rules[name].message.remove();
+                                _fields[i].rules[name] = new _ruleObject(_fields[i], name, fieldObj.rules[name]);
+                            } else {
+                                _fields[i].rules[name] = new _ruleObject(fieldObj, name, fieldObj.rules[name]);
                             }
                         }
-                        _prepRules(fieldObj);
-                        _fields[i].rules = $.extend(true, _fields[i].rules, fieldObj.rules);
                     } else if (i == -1) {
                         _addField(fieldObj);
                     }
