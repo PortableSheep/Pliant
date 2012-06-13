@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v3.4.2 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v3.4.3 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
@@ -302,7 +302,7 @@
                     fIndex = _getFieldObjectIndex(field);
                 }
                 if (fIndex == -1) {
-                    throw 'Field `' + fObj.selector + '` cannot be found.';
+                    throw 'Field `' + field.selector + '` cannot be found.';
                 }
                 return _fields[fIndex].Validate(null, true, true, false, fRules);
             }
@@ -350,6 +350,11 @@
             }
             return this.isValid;
         };
+        this.Destroy = function() {
+            this.ResetState();
+            this.ClearFields();
+            _events = [];
+        },
         this.Subscribe = function(e, handler) {
             if (_events[e]) {
                 _events[e].push(handler);
@@ -391,6 +396,7 @@
                     if (opt.appendRulesToFieldClass) {
                         _fields[i].field.removeClass(x);
                     }
+                    _fields[i].field.off('.pliant');
                 }
             }
             _fields = [];
