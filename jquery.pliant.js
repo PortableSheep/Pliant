@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v3.4.3 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v3.4.4 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
@@ -83,10 +83,16 @@
                         var rule = curField.rules[r];
                         if (rule.isEnabled === false || (opt.haltOnFirstInvalidRule && !Boolean(isValid))) {
                             rule.message.hide();
+                            if (rule.container) {
+                                rule.container.toggle((rule.container.find(msgSel).filter(':plVisible').length > 0));
+                            }
                             continue;
                         }
                         isValid &= (rule.isValid !== false);
                         rule.message.toggle((rule.isValid === false));
+                        if (rule.container) {
+                            rule.container.toggle((rule.container.find(msgSel).filter(':plVisible').length > 0));
+                        }
                     }
                     if ((curField.isValid = Boolean(isValid)) === false) {
                         _invalidCount++;
@@ -131,6 +137,9 @@
                     this.message = $(opt.messageWrap).addClass(opt.messageWrapClass).append(this.message);
                 }
                 this.message.hide();
+                if (this.container) {
+                    this.container.hide();
+                }
                 if (opt.onMessagePlacement) {
                     _trigger('onMessagePlacement', fObj.field, [this.message]);
                 } else if (this.container) {

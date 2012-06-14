@@ -9,6 +9,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **3.4.4**
+    * Fixed rule message containers not being hidden in the same way they are for fields.
 * **3.4.3**
     * Fixed a bug where a chained field that cannot be found throws the wrong exception.
 * **3.4.2**
