@@ -1,3 +1,4 @@
+/*! v1.1 */
 (function($) {
 	$.pliantPlugins.utils = function(o, plInst) {
 		if (!plInst.GetFieldRules) {
@@ -11,11 +12,11 @@
 								var props = [];
 								for(var key in _fields[i].rules[r]) {
 									var val = _fields[i].rules[r][key];
-									if (key == 'isValid' || key == 'isEnabled' || key == 'message' || val === undefined) {
+									if (key == '_origMsg' || key == 'isValid' || key == 'isEnabled' || key == 'message' || val === undefined) {
 										continue;
 									} else if (val instanceof jQuery) {
 										val = val.attr('id');
-									} else if (val instanceof Function && !includeFunctions || val instanceof Object && !includeObjects) {
+									} else if (typeof(val) === 'function' && !includeFunctions || typeof(val) === 'object' && !includeObjects) {
 										continue;
 									}
 									if (val !== undefined) {

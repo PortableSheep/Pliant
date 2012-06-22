@@ -9,6 +9,11 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **3.4.5**
+    * Changed rule chaining logic to accept the "rules" option as a string as well as an array, for brevity when only chaining one rule.
+    * Renamed "validateOnFieldChange" init option to "validateOnChange" for consistency.
+    * Changed "validateOnChange" handler context for rules/fields to be the field being processed, instead of the Pliant instance. This does not affect the init option since it doesn't allow for a handler.
+    * Fixed "validateSubmitScope" init option so it doesn't error when given a string as the selector, instead of a jQuery object.
 * **3.4.4**
     * Fixed rule message containers not being hidden in the same way they are for fields.
 * **3.4.3**
@@ -105,6 +110,10 @@ Pliant Change Log
     * Added ability to disable/enable validation on field change via 'validateOnChange' option in the field definition.
 
 - - -
+Utils Change Log
+---------------------
+* **1.1**
+    * Fixed GetFieldRules to properly detect objects and functions.
 
 InputMask Change Log
 ---------------------

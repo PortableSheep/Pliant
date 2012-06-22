@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v3.4.4 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v3.4.5 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
@@ -39,7 +39,7 @@
             reconcileFieldOrder: false, //If true, fields are added in the position they appear in the form, instead of the order they're added.
             haltOnFirstInvalidRule: true, //If true, validation is halted on the first invalid rule for the field.
             hideMessageContainerOnLoad: true, //If true, the message container is hidden on load, as long as the messageContainer option is supplied.
-            validateOnFieldChange: true, //If true, fields are validated on their "change" event.
+            validateOnChange: true, //If true, fields are validated on their "change" event.
             focusFirstInvalidField: false, //If true, the first invalid field gains focus after validation of the form. Note: This can be out of order if you're not using the reconcileFiledOrder option and have added fields out of order.
             parseMarkup: false, //If true, comments above fields returned by the inputSelector, will be parsed for rules.
             ignoreHidden: true, //If true, fields that are hidden during validation are ignored.
@@ -164,7 +164,7 @@
                     this[i] = obj[i];
                 }
             }
-            if (obj.validateOnChange || opt.validateOnFieldChange && obj.validateOnChange !== false) {
+            if (obj.validateOnChange || opt.validateOnChange && obj.validateOnChange !== false) {
                 this.field.on('change.pliant', function(){
                     fInst.Validate(null, true, false, true);
                 });
@@ -304,9 +304,9 @@
                 }
             } else {
                 var fIndex = -1, fRules = null;
-                if (field instanceof Object && !(field instanceof String) && !(field instanceof jQuery) && field.field && field.rules && field.rules instanceof Array) {
+                if (field instanceof Object && (typeof(field) !== 'string') && !(field instanceof jQuery) && field.field && (field.rules && (field.rules instanceof Array || typeof(field.rules) === 'string'))) {
                     fIndex = _getFieldObjectIndex(field.field);
-                    fRules = field.rules;
+                    fRules = (field.rule ? [field.rule] : field.rules);
                 } else {
                     fIndex = _getFieldObjectIndex(field);
                 }
@@ -324,7 +324,7 @@
         _fieldObject.prototype.Validate = function(data, refreshState, fromChain, fromChange, ruleFilter) {
             this.isValidPrev = this.isValid;
             this.isValid = true;
-            if (this.isEnabled && !((this.field.is(':disabled') && opt.ignoreDisabled || this.field.is(':hidden') && opt.ignoreHidden)) && !(fromChange && this.validateOnChange instanceof Function && this.validateOnChange.call(_self, this) === false)) {
+            if (this.isEnabled && !((this.field.is(':disabled') && opt.ignoreDisabled || this.field.is(':hidden') && opt.ignoreHidden)) && !(fromChange && this.validateOnChange instanceof Function && this.validateOnChange.call(this.field, this) === false)) {
                 _trigger('onPreFieldValidate', _self, [this]);
                 for(var i in this.rules) {
                     if (ruleFilter && ruleFilter.length > 0 && ruleFilter.indexOf(i) === -1) {
@@ -333,7 +333,7 @@
                     var rule = this.rules[i];
                     if (rule.isEnabled !== false) {
                         if (rule.validateOnChange !== undefined && rule.validateOnChange !== true && fromChange) {
-                            if (rule.validateOnChange instanceof Function && rule.validateOnChange.call(_self, this) === false || rule.validateOnChange === false) {
+                            if (rule.validateOnChange instanceof Function && rule.validateOnChange.call(this.field, this) === false || rule.validateOnChange === false) {
                                 rule.isValid = true;
                                 continue;
                             }
@@ -350,7 +350,7 @@
                     _refreshState();
                 }
                 _trigger('onPostFieldValidate', _self, [this, this.isValid]);
-                if (opt.validateOnFieldChange) {
+                if (opt.validateOnChange) {
                     _trigger('onFieldValidate', _self, [this, this.isValid]);
                 }
                 if (this.chain && !fromChain && fromChange) {
@@ -434,7 +434,11 @@
                 }
             };
             if (opt.validateSubmitSelector) {
-                (opt.validateSubmitScope||_$this).on(opt.validateSubmitOn||'click', (opt.validateSubmitSelector instanceof jQuery ? opt.validateSubmitSelector.selector : opt.validateSubmitSelector), submitHandler);
+                var subScope = _$this;
+                if (opt.validateSubmitScope) {
+                    subScope = (opt.validateSubmitScope instanceof jQuery ? opt.validateSubmitScope : $(opt.validateSubmitScope));
+                }
+                subScope.on(opt.validateSubmitOn||'click', (opt.validateSubmitSelector instanceof jQuery ? opt.validateSubmitSelector.selector : opt.validateSubmitSelector), submitHandler);
             } else if (_$this.is('form')) {
                 _$this.submit(submitHandler);
             }
