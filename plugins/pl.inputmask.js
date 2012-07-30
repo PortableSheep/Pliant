@@ -1,4 +1,4 @@
-/*! v1.2 */
+/*! v1.3 */
 (function($) {
     $.pliantPlugins.inputmask = function(o, plInst) {
         var opt = $.extend(true, {
@@ -179,6 +179,15 @@
                     mObj.onMaskComplete.call(mObj.field);
                 }
             }
+        },
+        findEndInputIndex = function(mObj, value) {
+            var valSplit = value.split(''), len = mObj.mask.length;
+            for(var i = len-1; i > 0; i--) {
+                if (mObj.mask[i] !== valSplit[i] && mObj.rule[i]) {
+                    return (i+1 < len ? i+1 : mObj.mask.length);
+                }
+            }
+            return 0;
         };
         plInst.Subscribe('onFieldAdded', function(fObj) {
             var mask = fObj.mask||fObj.field.attr('mask');
@@ -228,7 +237,7 @@
                     return false;
                 }).on('focus.mvinputmask', function() {
                     applyMask(mObj);
-                    var $this = $(this).removeClass(opt.emptyMaskClass), val = mObj.prevVal = $this.val(), i = (mObj.placeholder ? findNext(mObj, val.split(''), 0) : val.length);
+                    var $this = $(this).removeClass(opt.emptyMaskClass), val = mObj.prevVal = $this.val(), i = (mObj.placeholder ? findEndInputIndex(mObj, val) : val.length);
                     if (i > -1) {
                         setTimeout(function() {
                             setCaret($this[0], i);

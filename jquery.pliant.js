@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v3.4.5 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v3.5 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
@@ -214,6 +214,7 @@
                         _fields[i].field.removeClass(x);
                     }
                 }
+                _trigger('onFieldRemoved', _fields[i], [this]);
                 _fields.splice(i, 1);
             }
         },
@@ -221,6 +222,7 @@
             var i = _getFieldObjectIndex(field);
             if (i > -1) {
                 _fields[i].isEnabled = enabled;
+                _trigger('onFieldToggle', _fields[i], [enabled, this]);
             }
         },
         _setFieldRuleEnabled = this.SetFieldRuleEnabled = function(field, rule, enabled) {
@@ -232,6 +234,7 @@
                         if (opt.appendRulesToFieldClass) {
                             _fields[i].field.toggleClass(name, enabled);
                         }
+                        _trigger('onFieldRuleToggle', _fields[i], [enabled, name, this]);
                         break;
                     }
                 }

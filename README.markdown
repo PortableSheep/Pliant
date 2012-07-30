@@ -9,6 +9,9 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **3.5**
+    * Added new events onFieldRemoved, onFieldToggle, and onFieldRuleToggle.
+    * Added new pl.decorator.js plugin that makes decorating elements for a field easier. Example: Astrisks for required fields.
 * **3.4.5**
     * Changed rule chaining logic to accept the "rules" option as a string as well as an array, for brevity when only chaining one rule.
     * Renamed "validateOnFieldChange" init option to "validateOnChange" for consistency.
@@ -117,5 +120,7 @@ Utils Change Log
 
 InputMask Change Log
 ---------------------
+* **1.3**
+    * Fixed bug where focus event wasn't setting the cursor position to the first valid placeholder.
 * **1.2**
     * Added a handler for the change event that removes the mask CSS class if the value of the field isn't the mask string.
