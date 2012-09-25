@@ -1,4 +1,4 @@
-/*! v1.3 */
+/*! v1.4 */
 (function($) {
     $.pliantPlugins.inputmask = function(o, plInst) {
         var opt = $.extend(true, {
@@ -23,7 +23,7 @@
                 out = { start: field.selectionStart, end: field.selectionEnd };
             } else if (document.selection && document.selection.createRange) {
                 var range = document.selection.createRange();
-                out = { start: (0 - range.duplicate().moveStart('character', -100000)), end: range.text.length };
+                out = { start: (0 - range.duplicate().moveStart('character', -100000)), end: (0 - range.moveEnd('character', -100000)) };
             }
             out.count = (out.start == out.end ? 1 : out.end - out.start);
             return out;
@@ -83,7 +83,7 @@
                     rem = (mObj.rule[i] === null);
                 }
                 if (rem) {
-                    val.splice(mObj.optionalIndex);
+                    val.splice(mObj.optionalIndex, (val.length - mObj.optionalIndex));
                 }
                 mObj.field.val(val.join(''));
             }
@@ -277,7 +277,7 @@
                     }
                 });
                 //Check if we need to apply the mask, and remove the optional masking if needed.
-                var val = fObj.field.val().trim();
+                var val = $.trim(fObj.field.val());
                 if (!mObj.maskOnFocus || val.length > 0) {
                     applyMask(mObj);
                     if (val.length > 0) {
@@ -311,7 +311,7 @@
         //Public function to clear all visible masks... useful for for submissions.
         plInst.ClearMasks = function() {
             for(var i = 0; i < fieldMap.length; i++) {
-                if (fieldMap[i].field.val().trim() === fieldMap[i].string) {
+                if ($.trim(fieldMap[i].field.val()) === fieldMap[i].string) {
                     fieldMap[i].field.val('');
                 }
             }
