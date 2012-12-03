@@ -113,6 +113,15 @@ Pliant Change Log
     * Added ability to disable/enable validation on field change via 'validateOnChange' option in the field definition.
 
 - - -
+Decorator Change Log
+---------------------
+* **1.2**
+    * Refactored plugin to require less code per field. Now the key name is the rule name, and it will auto decorate based on that.
+    * Changed init to hide decoration if the field isn't visible, and the sync is enabled.
+    * Changed logic so that calling show/hide from jQuery on a decorated field, also hides or shows the decoration if sync is enabled.
+    * Added ability to ignore all decorator processing for a field, using the "decorate: false" option when declaring the field.
+    * Added ability to ignore decorator processing for a fields rule, using the "decorate: false" option when declaring the rule for the field.
+
 Utils Change Log
 ---------------------
 * **1.1**
