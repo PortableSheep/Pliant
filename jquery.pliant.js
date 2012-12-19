@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v3.5 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v3.6 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2012, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
  */
 (function($) {
@@ -21,7 +21,7 @@
                 length: {
                     min: 0, max: 256, message: 'Invalid length',
                     validate: function(obj) {
-                        var len = (this.val()).length, result = true;
+                        var len = (this.val().replace(/\n/g, '\r\n')).length, result = true;
                         result &= (obj.max ? (len <= obj.max) : true);
                         result &= (obj.min ? (len >= obj.min) : true);
                         return result;

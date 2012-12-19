@@ -9,6 +9,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **3.6**
+    * Changed default length rule to replace new lines with carriage returns so that length calculation is the same as server side languages for textareas.
 * **3.5**
     * Added new events onFieldRemoved, onFieldToggle, and onFieldRuleToggle.
     * Added new pl.decorator.js plugin that makes decorating elements for a field easier. Example: Astrisks for required fields.
