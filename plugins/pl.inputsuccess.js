@@ -1,24 +1,25 @@
 (function($) {
-	$.pliantPlugins.inputsuccess = function(options, plInst) {
-        var opt = $.extend({
+	$.pliantPlugin('inputsuccess', {
+        options: {
             successInputClass: 'pl-input-success',
             successMessageClass: 'pl-element-success'
-        }, options);
-        plInst.Subscribe('onFieldAdded', function(f) {
+        },
+        onFieldAdded: function(f) {
             if (f.successMessage) {
-                f.successMessage = $('<label></label>').append(f.successMessage).addClass(opt.successMessageClass).hide();
+                f.successMessage = $('<label></label>').append(f.successMessage).addClass(this.options.successMessageClass).hide();
                 f.field.after(f.successMessage);
             }
-        }).Subscribe('onFieldValidate', function(f, isValid) {
+        },
+        onFieldValidate: function(f) {
             if (f.successMessage) {
-                if (isValid && !f.isValidPrev) {
-                    f.field.addClass(opt.successInputClass);
+                if (f.valid && !f._.valid) {
+                    f.field.addClass(this.options.successInputClass);
                     f.successMessage.show();
                 } else {
-                    f.field.removeClass(opt.successInputClass);
+                    f.field.removeClass(this.options.successInputClass);
                     f.successMessage.hide();
                 }
             }
-        });
-    };
+        }
+    });
 })(jQuery);

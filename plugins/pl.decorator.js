@@ -1,33 +1,34 @@
 /*! v1.2 */
 (function($) {
-	$.pliantPlugins.decorator = function(options, plInst) {
-        var opt = $.extend({}, options),
-            _handleHide = function(obj) {
-                for(var i in obj.rules) {
-                    if (obj.rules[i].decorate && obj.rules[i].decorate.sync) {
-                        obj.rules[i].decorate.content.hide();
-                    }
+    $.pliantPlugin('decorator', {
+        options: {
+        },
+        _handleHide: function(obj) {
+            for(var i in obj.rules) {
+                if (obj.rules[i].decorate && obj.rules[i].decorate.sync) {
+                    obj.rules[i].decorate.content.hide();
                 }
-            },
-            _handleShow = function(obj) {
-                for(var i in obj.rules) {
-                    if (obj.rules[i].decorate && obj.rules[i].decorate.sync) {
-                        obj.rules[i].decorate.content.show();
-                    }
+            }
+        },
+        _handleShow: function(obj) {
+            for(var i in obj.rules) {
+                if (obj.rules[i].decorate && obj.rules[i].decorate.sync) {
+                    obj.rules[i].decorate.content.show();
                 }
-            };
-        plInst.Subscribe('onFieldAdded', function(fieldObj) {
+            }
+        },
+        onFieldAdded: function(fieldObj) {
             if (fieldObj.decorate !== false) {
                 for(var i in fieldObj.rules) {
                     if (fieldObj.rules[i].decorate === false) {
                         continue;
                     }
-                    if (opt.hasOwnProperty(i)) {
-                        fieldObj.rules[i].decorate = $.extend({}, opt[i]);
+                    if (this.options.hasOwnProperty(i)) {
+                        fieldObj.rules[i].decorate = $.extend({}, this.options[i]);
                         if (!(fieldObj.rules[i].decorate.content instanceof jQuery)) {
                             fieldObj.rules[i].decorate.content = $(fieldObj.rules[i].decorate.content);
                         }
-                        var what = ($.isFunction(fieldObj.rules[i].decorate.what) ? fieldObj.rules[i].decorate.what.call(this) : fieldObj.rules[i].decorate.what);
+                        var what = ($.isFunction(fieldObj.rules[i].decorate.what) ? fieldObj.rules[i].decorate.what.call(fieldObj.field) : fieldObj.rules[i].decorate.what);
                         switch(fieldObj.rules[i].decorate.how.toLowerCase()) {
                             case 'prepend':
                                 what.prepend(fieldObj.rules[i].decorate.content);
@@ -62,24 +63,27 @@
                     }
                 }
             }
-        }).Subscribe('onFieldRemoved', function() {
-            for(var i in this.rules) {
-                if (this.rules[i].decorate) {
-                    this.rules[i].decorate.content.remove();
+        },
+        onFieldRemoved: function(fieldObj) {
+            for(var i in fieldObj.rules) {
+                if (fieldObj.rules[i].decorate) {
+                    fieldObj.rules[i].decorate.content.remove();
                 }
             }
-        }).Subscribe('onFieldToggle', function(isEnabled) {
+        },
+        onFieldToggle: function(isEnabled) {
             for(var i in this.rules) {
                 if (this.rules[i].decorate && this.rules[i].decorate.sync) {
                     this.rules[i].decorate.content.toggle(isEnabled);
                 }
             }
-        }).Subscribe('onFieldRuleToggle', function(isEnabled, name) {
+        },
+        onFieldRuleToggle: function(isEnabled, name) {
             for(var i in this.rules) {
                 if (name == i && this.rules[i].decorate && this.rules[i].decorate.sync) {
                     this.rules[i].decorate.content.toggle(isEnabled);
                 }
             }
-        });
-    };
+        }
+    });
 })(jQuery);
