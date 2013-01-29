@@ -1,0 +1,40 @@
+{
+	"name": "pliant",
+	"title": "pliant - Extensible and flexible validation.",
+	"description": "A flexible forms validation plugin, that's easily extensible via plugins.",
+	"keywords": [
+		"validate",
+		"validation",
+		"forms",
+		"valid"
+	],
+	"version": "4.0.0",
+	"author": {
+		"name": "Michael Gunderson",
+		"url": "https://github.com/PortableSheep"
+	},
+	"maintainers": [
+		{
+			"name": "Michael Gunderson",
+			"email": "admin@portablesheep.com",
+			"url": "https://github.com/PortableSheep"
+		}
+	],
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "MIT-LICENSE.txt"
+		},
+		{
+			"type": "GPLv2",
+			"url": "GPL-LICENSE.txt"
+		}
+	],
+	"homepage": "http://portablesheep.github.com/Pliant/",
+	"bugs": "https://github.com/PortableSheep/Pliant/issues",
+	"docs": "https://github.com/PortableSheep/Pliant/wiki",
+	"download": "http://portablesheep.github.com/Pliant/",
+	"dependencies": {
+		"jquery": ">=1.8"
+	}
+}

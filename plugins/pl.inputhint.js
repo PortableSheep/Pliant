@@ -1,3 +1,4 @@
+/*! v1.1 */
 (function($) {
     $.pliantPlugin('inputhint', {
         options: {
@@ -39,9 +40,14 @@
                 if (field.attr('type') == 'password') {
                     field.data('isPassword', true).get(0).type = 'text';
                 }
-                field.attr('hintText', hint).addClass(this.options.hintClass).val(hint).change($.proxy(function() {
+                field.attr('hintText', hint).addClass(this.options.hintClass).val(hint).on('change.inputhint', $.proxy(function() {
                     $(this).removeClass(this.options.hintClass);
-                }, this)).click($.proxy(this.hideHint, this)).blur($.proxy(this.showHint, this)).focus($.proxy(this.hideHint, this));
+                }, this)).on('click.inputhint', $.proxy(this.hideHint, this)).on('blur.inputhint', $.proxy(this.showHint, this)).on('focus.inputhint', $.proxy(this.hideHint, this));
+            }
+        },
+        onFieldRemoved: function(fieldObj) {
+            if (fieldObj.field.hasClass(this.optons.hintClass)) {
+                fieldObj.field.removeClass(this.options.hintClass).val('').off('.inputhint');
             }
         }
     });

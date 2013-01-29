@@ -1,8 +1,7 @@
-/*! v1.2 */
+/*! v1.3 */
 (function($) {
     $.pliantPlugin('decorator', {
-        options: {
-        },
+        options: {},
         _handleHide: function(obj) {
             for(var i in obj.rules) {
                 if (obj.rules[i].decorate && obj.rules[i].decorate.sync) {

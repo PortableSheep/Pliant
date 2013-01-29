@@ -9,6 +9,11 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **4.0**
+    * Changed pliant plugin architecture to be similar to UI plugins.
+    * Changed all plugins to new architecture.
+    * Moved HTML rule parsing to its own plugin.
+    * Changed internal logic to be (hopefully) easier to follow, better formatted, and more commented.
 * **3.6**
     * Changed default length rule to replace new lines with carriage returns so that length calculation is the same as server side languages for textareas.
 * **3.5**
@@ -117,6 +122,8 @@ Pliant Change Log
 - - -
 Decorator Change Log
 ---------------------
+* **1.3**
+    * Refactored plugin to use new plugin format.
 * **1.2**
     * Refactored plugin to require less code per field. Now the key name is the rule name, and it will auto decorate based on that.
     * Changed init to hide decoration if the field isn't visible, and the sync is enabled.
@@ -126,12 +133,35 @@ Decorator Change Log
 
 Utils Change Log
 ---------------------
+* **1.2**
+    * Refactored plugin to use new plugin format.
 * **1.1**
     * Fixed GetFieldRules to properly detect objects and functions.
 
 InputMask Change Log
 ---------------------
+* **1.4**
+    * Refactored plugin to use new plugin format.
 * **1.3**
     * Fixed bug where focus event wasn't setting the cursor position to the first valid placeholder.
 * **1.2**
     * Added a handler for the change event that removes the mask CSS class if the value of the field isn't the mask string.
+
+HTMLRules Change Log
+---------------------
+* **1.0**
+    * Initial version, based on code moved out of the main plugin.
+
+InputHint Change Log
+---------------------
+* **1.1**
+    * Refactored plugin to use new plugin format.
+* **1.0**
+    * Initial version.
+
+InputSuccess Change Log
+---------------------
+* **1.1**
+    * Refactored plugin to use new plugin format.
+* **1.0**
+    * Initial version.

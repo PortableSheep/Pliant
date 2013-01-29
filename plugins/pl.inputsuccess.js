@@ -1,3 +1,4 @@
+/*! v1.1 */
 (function($) {
 	$.pliantPlugin('inputsuccess', {
         options: {
@@ -19,6 +20,12 @@
                     f.field.removeClass(this.options.successInputClass);
                     f.successMessage.hide();
                 }
+            }
+        },
+        onFieldRemoved: function(f) {
+            if (f.successMessage) {
+                f.field.removeClass(this.options.successInputClass);
+                f.successMessage.remove();
             }
         }
     });

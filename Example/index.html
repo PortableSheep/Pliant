@@ -5,10 +5,12 @@
     <link type="text/css" href="css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
     <script type="text/javascript" src="jquery-1.9.0.min.js"></script>
     <script type="text/javascript" src="jquery-ui-1.10.0.custom.min.js"></script>
-    <script type="text/javascript" src="..\jquery.pliant2.js"></script>
+    <script type="text/javascript" src="..\jquery.pliant.js"></script>
     <script type="text/javascript" src="..\plugins\pl.decorator.js"></script>
     <script type="text/javascript" src="..\plugins\pl.inputhint.js"></script>
     <script type="text/javascript" src="..\plugins\pl.inputsuccess.js"></script>
+    <script type="text/javascript" src="..\plugins\pl.htmlrules.js"></script>
+    <script type="text/javascript" src="..\plugins\pl.inputmask.js"></script>
     <style type="text/css">
         .pl-element-error {
             color: red;
@@ -44,7 +46,6 @@
                 firstname = $('#FirstName'),
                 val = $('#signupForm').pliant({
                     appendRulesToFieldClass: true,
-                    parseMarkup: true,
                     rules: {
                         dateformat: {
                             message: 'Invalid Date',
@@ -59,6 +60,9 @@
                         }
                     },
                     plugins: {
+                        htmlrules: {
+                            parseOnInit: true
+                        },
                         decorator: {
                             required: {
                                 content: '<span style="color: red;">*</span>',
@@ -69,13 +73,13 @@
                                 }
                             }
                         },
-                        // inputmask: {
-                        //     emptyMaskClass: 'plHint',
-                        //     resetIncompleteMasks: false,
-                        //     masks: {
-                        //         date: { maskOnFocus: false }
-                        //     }
-                        // },
+                        inputmask: {
+                            emptyMaskClass: 'plHint',
+                            resetIncompleteMasks: false,
+                            masks: {
+                                date: { maskOnFocus: false }
+                            }
+                        },
                         inputsuccess: {},
                         inputhint: {}
                     },
@@ -83,7 +87,6 @@
                         {
                             field: password,
                             successMessage: 'Test',
-                            // hintText: 'Password',
                             rules: {
                                 required:{},
                                 length: {
@@ -122,7 +125,11 @@
                                 mylength: {
                                     message: 'Must be between 10 and 20 characters.'
                                 }
+                            },
+                            test: {
+                                sup: 'test'
                             }
+
                         },
                         {
                             field: datePick,
@@ -141,11 +148,11 @@
                 buttonImage: "calendar.gif",
 			    buttonImageOnly: true
             });
-            // setTimeout(function() {
-            //     var test = $('#test');
-            //     test.html('<label for="dynamicField">Dynamic Field</label><div><!-- { "field": "#dynamicField", "rules": { "required":{}} } --><input id="dynamicField" name="dynamicField" type="text" /></div>');
-            //     val.AddMarkupRules();
-            // }, 3000);
+            setTimeout(function() {
+                var test = $('#test');
+                test.html('<label for="dynamicField">Dynamic Field</label><div><!-- { "field": "#dynamicField", "rules": { "required":{}} } --><input id="dynamicField" name="dynamicField" type="text" /></div>');
+                val.AddMarkupRules();
+            }, 3000);
         });
     </script>
 </head>
@@ -163,7 +170,7 @@
             </div>
             <label for="password">Password</label>
             <div>
-                <input id="password" name="password" type="password" hintText="Password"/>
+                <input id="password" name="password" type="password" hintText="Password" />
             </div>
         </div>
         <div>

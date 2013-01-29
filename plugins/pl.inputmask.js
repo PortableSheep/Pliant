@@ -1,7 +1,7 @@
 /*! v1.4 */
 (function($) {
-    $.pliantPlugins.inputmask = function(o, plInst) {
-        var opt = $.extend(true, {
+    $.pliantPlugin('inputmask', {
+        options: {
             masks: {
                 date: { rule: '9{2}/9{2}/9{4}', placeholder: '_', maskOnFocus: true },
                 url: { rule: 'http://*{512}', placeholder: '', maskOnFocus: false },
@@ -16,8 +16,9 @@
             },
             resetIncompleteMasks: true,
             emptyMaskClass: 'plinputmask'
-        }, o), fieldMap = [],
-        getCaret = function(field) {
+        },
+        fieldMap: [],
+        getCaret: function(field) {
             var out = null;
             if (field.setSelectionRange) {
                 out = { start: field.selectionStart, end: field.selectionEnd };
@@ -28,7 +29,7 @@
             out.count = (out.start == out.end ? 1 : out.end - out.start);
             return out;
         },
-        setCaret = function(field, start, end) {
+        setCaret: function(field, start, end) {
             if (typeof start == 'number') {
                 end = end||start;
                 if (field.setSelectionRange) {
@@ -43,7 +44,7 @@
                 }
             }
         },
-        parseRule = function(mask) {
+        parseRule: function(mask) {
             var out = { rule: [], mask: [], string: '', placeholder: mask.placeholder, maskOnFocus: mask.maskOnFocus, optionalIndex: -1, lastAction: null, onMaskComplete: mask.onMaskComplete, onMaskChange: mask.onMaskChange }, chars = mask.rule.split('');
             for(var i = 0; i < chars.length; i++) {
                 if (chars[i] === '{') {
@@ -58,8 +59,8 @@
                     }
                 } else if (chars[i] == '?') {
                     out.optionalIndex = i-1;
-                } else if (opt.definitions[chars[i]]) {
-                    out.rule.push(new RegExp(opt.definitions[chars[i]]));
+                } else if (this.options.definitions[chars[i]]) {
+                    out.rule.push(new RegExp(this.options.definitions[chars[i]]));
                     out.mask.push(mask.placeholder);
                 } else {
                     out.rule.push(null);
@@ -69,10 +70,10 @@
             out.string = out.mask.join('');
             return out;
         },
-        match = function(mObj, val, pos) {
+        match: function(mObj, val, pos) {
             return (mObj.rule[pos] ? mObj.rule[pos].test(val) : false);
         },
-        removeOptionalMask = function(mObj, val) {
+        removeOptionalMask: function(mObj, val) {
             if (mObj.optionalIndex > -1) {
                 val = val.split('');
                 var i = mObj.optionalIndex, rem = false;
@@ -88,18 +89,18 @@
                 mObj.field.val(val.join(''));
             }
         },
-        applyMask = function(mObj) {
+        applyMask: function(mObj) {
             var val = mObj.field.val(), content = mObj.string.split('');
             if (!val) {
-                mObj.field.addClass(opt.emptyMaskClass);
+                mObj.field.addClass(this.options.emptyMaskClass);
             } else if (!mObj.placeholder) {
                 var i = -1;
                 while(i++ < val.length && val.charAt(i) === content[i]);
                 val = val.substring(i);
             }
-            insert(mObj, content, val, {start: 0, end: 0}, false);
+            this.insert(mObj, content, val, {start: 0, end: 0}, false);
         },
-        findPrev = function(mObj, start) {
+        findPrev: function(mObj, start) {
             for(var i = start; i >= 0; i--) {
                 if (mObj.rule[i]) {
                     return i;
@@ -107,7 +108,7 @@
             }
             return -1;
         },
-        findNext = function(mObj, value, start) {
+        findNext: function(mObj, value, start) {
             for(var i = start; i <= value.length; i++) {
                 if (mObj.rule[i]) {
                     return i;
@@ -115,13 +116,13 @@
             }
             return -1;
         },
-        shiftRight = function(mObj, value, start) {
+        shiftRight: function(mObj, value, start) {
             for (var i = start, next = start, nChar = mObj.placeholder||''; i < mObj.mask.length && next > -1; i++) {
                 if (mObj.rule[i]) {
-                    next = findNext(mObj, value, i+1);
+                    next = this.findNext(mObj, value, i+1);
                     var curr = value[i];
                     value[i] = nChar;
-                    if (curr === undefined || match(mObj, curr, next)) {
+                    if (curr === undefined || this.match(mObj, curr, next)) {
                         nChar = curr;
                     } else {
                         break;
@@ -129,49 +130,49 @@
                 }
             }
         },
-        shiftLeft = function(mObj, value, start, end) {
-            for(var i = start, next = findNext(mObj, value, end); i < mObj.mask.length && next > -1; i++) {
+        shiftLeft: function(mObj, value, start, end) {
+            for(var i = start, next = this.findNext(mObj, value, end); i < mObj.mask.length && next > -1; i++) {
                 if (mObj.rule[i]) {
-                    if (match(mObj, value[next], i)) {
+                    if (this.match(mObj, value[next], i)) {
                         value[i] = value[next];
                         value[next] = mObj.placeholder;
                     } else {
                         break;
                     }
-                    next = findNext(mObj, value, next+1);
+                    next = this.findNext(mObj, value, next+1);
                 }
             }
         },
-        insert = function(mObj, content, value, atPos, setPos) {
-            var pos = (atPos||getCaret(mObj.field[0])), aVal = value.split('');
+        insert: function(mObj, content, value, atPos, setPos) {
+            var pos = (atPos||this.getCaret(mObj.field[0])), aVal = value.split('');
             if (pos.start < mObj.rule.length) {
                 if (pos.start !== pos.end) {
-                    remove(mObj, content, pos.start, pos.end);
+                    this.remove(mObj, content, pos.start, pos.end);
                     if (pos.count > 1) {
-                        shiftLeft(mObj, content, pos.start+1, pos.end);
+                        this.shiftLeft(mObj, content, pos.start+1, pos.end);
                     }
                 }
-                for(var i = 0, next = findNext(mObj, content, pos.start); i < aVal.length && next > -1; i++) {
-                    if (match(mObj, aVal[i], next)) {
-                        shiftRight(mObj, content, next);
+                for(var i = 0, next = this.findNext(mObj, content, pos.start); i < aVal.length && next > -1; i++) {
+                    if (this.match(mObj, aVal[i], next)) {
+                        this.shiftRight(mObj, content, next);
                         content[next] = aVal[i];
-                        next = findNext(mObj, content, next+1);
+                        next = this.findNext(mObj, content, next+1);
                     }
                 }
-                writeOut(mObj, content, (setPos ? (next > -1 ? next : pos.start+1) : null));
+                this.writeOut(mObj, content, (setPos ? (next > -1 ? next : pos.start+1) : null));
             }
         },
-        remove = function(mObj, value, start, end) {
+        remove: function(mObj, value, start, end) {
             for(var i = start; i < end && i < value.length; i++) {
                 if (mObj.rule[i]) {
                     value[i] = mObj.placeholder;
                 }
             }
         },
-        writeOut = function(mObj, value, start, end) {
+        writeOut: function(mObj, value, start, end) {
             mObj.field.val(value.join(''));
             if (start !== null) {
-                setCaret(mObj.field[0], start, end);
+                this.setCaret(mObj.field[0], start, end);
                 if (mObj.onMaskChange) {
                     mObj.onMaskChange.call(mObj.field);
                 }
@@ -180,7 +181,7 @@
                 }
             }
         },
-        findEndInputIndex = function(mObj, value) {
+        findEndInputIndex: function(mObj, value) {
             var valSplit = value.split(''), len = mObj.mask.length;
             for(var i = len-1; i > 0; i--) {
                 if (mObj.mask[i] !== valSplit[i] && mObj.rule[i]) {
@@ -188,133 +189,154 @@
                 }
             }
             return 0;
-        };
-        plInst.Subscribe('onFieldAdded', function(fObj) {
+        },
+        onFieldAdded: function(fObj) {
             var mask = fObj.mask||fObj.field.attr('mask');
-            if (mask && fObj.field.attr('type') !== 'password' && opt.masks[mask]) {
-                var mObj = parseRule(opt.masks[mask]);
+            if (mask && fObj.field.attr('type') !== 'password' && this.options.masks[mask]) {
+                var mObj = this.parseRule(this.options.masks[mask]);
                 mObj.field = fObj.field;
-                fObj.field.on('keypress.mvinputmask', function(e) {
+                fObj.field.on('keypress.mvinputmask', $.proxy(function(e) {
+                    var $this = $(e.target);
                     if (!e.ctrlKey && !e.altKey && !e.metaKey && e.which >= 32) {
-                        insert(mObj, $(this).val().split(''), String.fromCharCode(e.which), null, true);
+                        this.insert(mObj, $this.val().split(''), String.fromCharCode(e.which), null, true);
                         return false;
                     } else if (e.which === 13) {
-                        $(this).blur();
+                        $this.blur();
                     }
-                }).on('keydown.mvinputmask', function(e) {
-                    var pos = getCaret(this), value = $(this).val().split('');
+                }, this)).on('keydown.mvinputmask', $.proxy(function(e) {
+                    var field = e.target;
+                    var pos = this.getCaret(field), value = $(field).val().split('');
                     if (e.which == 8 && pos.start === pos.end && pos.start-1 >= 0) {
-                        pos.start = findPrev(mObj, pos.start-1);
+                        pos.start = this.findPrev(mObj, pos.start-1);
                         if (pos.start > -1) {
-                            remove(mObj, value, pos.start, pos.end);
-                            shiftLeft(mObj, value, pos.start, pos.end);
-                            writeOut(mObj, value, pos.start);
+                            this.remove(mObj, value, pos.start, pos.end);
+                            this.shiftLeft(mObj, value, pos.start, pos.end);
+                            this.writeOut(mObj, value, pos.start);
                         }
                         return false;
                     } else if (e.which == 46 && pos.start <= mObj.mask.length-1 || (e.which == 8 && pos.start !== pos.end)) {
-                        pos.start = findNext(mObj, value, pos.start);
+                        pos.start = this.findNext(mObj, value, pos.start);
                         if (pos.start > pos.end) {
                             pos.end += (pos.start - pos.end) + 1;
                         }
                         pos.end = (pos.start === pos.end ? pos.end+1 : pos.end);
-                        remove(mObj, value, pos.start, pos.end);
-                        shiftLeft(mObj, value, pos.start, pos.end);
-                        writeOut(mObj, value, pos.start);
+                        this.remove(mObj, value, pos.start, pos.end);
+                        this.shiftLeft(mObj, value, pos.start, pos.end);
+                        this.writeOut(mObj, value, pos.start);
                         return false;
                     }
-                }).on('paste.mvinputmask', function(e) {
-                    var $this = $(this), currVal = $this.val().split(''), pos = getCaret(this);
+                }, this)).on('paste.mvinputmask', $.proxy(function(e) {
+                    var $this = $(e.target), currVal = $this.val().split(''), pos = this.getCaret($this[0]);
                     if (pos.start < mObj.mask.length) {
                         $this.val('');
-                        setTimeout(function() {
-                            insert(mObj, currVal, $this.val(), pos, true);
+                        setTimeout($.proxy(function() {
+                            this.insert(mObj, currVal, $this.val(), pos, true);
                             mObj.lastAction = 'p';
-                        }, 0);
+                        }, this), 0);
                     } else {
                         return false;
                     }
-                }).on('cut.mvinputmask', function(e) {
+                }, this)).on('cut.mvinputmask', function() {
                     return false;
-                }).on('focus.mvinputmask', function() {
-                    applyMask(mObj);
-                    var $this = $(this).removeClass(opt.emptyMaskClass), val = mObj.prevVal = $this.val(), i = (mObj.placeholder ? findEndInputIndex(mObj, val) : val.length);
+                }).on('focus.mvinputmask', $.proxy(function(e) {
+                    this.applyMask(mObj);
+                    var $this = $(e.target).removeClass(this.options.emptyMaskClass), val = mObj.prevVal = $this.val(), i = (mObj.placeholder ? this.findEndInputIndex(mObj, val) : val.length);
                     if (i > -1) {
-                        setTimeout(function() {
-                            setCaret($this[0], i);
-                        }, 0);
+                        setTimeout($.proxy(function() {
+                            this.setCaret($this[0], i);
+                        }, this), 0);
                     }
-                }).on('blur.mvinputmask', function() {
-                    var $this = $(this), val = $this.val(), phIndex = (val ? val.indexOf(mObj.placeholder) : -1);
+                }, this)).on('blur.mvinputmask', $.proxy(function(e) {
+                    var $this = $(e.target), val = $this.val(), phIndex = (val ? val.indexOf(mObj.placeholder) : -1);
                     if (val) {
                         if (mObj.maskOnFocus && (val === mObj.string || mObj.placeholder && phIndex > -1)) {
                             $this.val('');
-                        } else if (mObj.placeholder && opt.resetIncompleteMasks && phIndex > -1 && (mObj.optionalIndex == -1 || phIndex < mObj.optionalIndex)) {
+                        } else if (mObj.placeholder && this.options.resetIncompleteMasks && phIndex > -1 && (mObj.optionalIndex == -1 || phIndex < mObj.optionalIndex)) {
                             $this.val(mObj.string);
                         }
                     }
                     val = $this.val();
                     if (mObj.optionalIndex > -1 && phIndex > mObj.optionalIndex)  {
-                        removeOptionalMask(mObj, val);
+                        this.removeOptionalMask(mObj, val);
                     }
                     if (!mObj.lastAction || mObj.lastAction !== 'p') {
                         mObj.lastAction = null;
                         if ((mObj.maskOnFocus && ((val && val !== mObj.prevVal) || !val && mObj.prevVal !== mObj.string)) || (!mObj.maskOnFocus && (val !== mObj.prevVal||val !== mObj.string))) {
-                            $this.removeClass(opt.emptyMaskClass).trigger('change');
+                            $this.removeClass(this.options.emptyMaskClass).trigger('change');
                         }
                     }
                     if (val === mObj.string) {
-                        $this.addClass(opt.emptyMaskClass);
+                        $this.addClass(this.options.emptyMaskClass);
                     }
-                }).on('change.mvinputmask', function() {
-                    var val = $(this).val();
+                }, this)).on('change.mvinputmask', $.proxy(function(e) {
+                    var val = $(e.target).val();
                     if (val === mObj.string) {
-                        fObj.field.addClass(opt.emptyMaskClass);
+                        fObj.field.addClass(this.options.emptyMaskClass);
                     } else {
-                        fObj.field.removeClass(opt.emptyMaskClass);
+                        fObj.field.removeClass(this.options.emptyMaskClass);
                         if (mObj.optionalIndex > -1 && val !== mObj.string) {
-                            removeOptionalMask(mObj, fObj.field.val());
+                            this.removeOptionalMask(mObj, fObj.field.val());
                         }
                     }
-                });
+                }, this));
                 //Check if we need to apply the mask, and remove the optional masking if needed.
                 var val = $.trim(fObj.field.val());
                 if (!mObj.maskOnFocus || val.length > 0) {
-                    applyMask(mObj);
+                    this.applyMask(mObj);
                     if (val.length > 0) {
                         if (val === mObj.string) {
-                            fObj.field.addClass(opt.emptyMaskClass);
+                            fObj.field.addClass(this.options.emptyMaskClass);
                         }
                         if (mObj.optionalIndex > -1 && val !== mObj.string) {
-                            removeOptionalMask(mObj, fObj.field.val());
+                            this.removeOptionalMask(mObj, fObj.field.val());
                         }
                     }
                 }
-                fieldMap.push(mObj);
+                this.fieldMap.push(mObj);
             }
-        }).Subscribe('onPreFieldValidate', function(fObj) {
-            for(var i = 0; i < fieldMap.length; i++) {
-                if (fieldMap[i].mask && fieldMap[i].field[0] === fObj.field[0]) {
-                    if (fObj.field.val() === fieldMap[i].string) {
-                        fObj.field.val('').removeClass(opt.emptyMaskClass);
-                    } else if (fieldMap[i].optionalIndex > -1) {
-                        removeOptionalMask(fieldMap[i], fObj.field.val());
+        },
+        onPreFieldValidate: function(fObj) {
+            for(var i = 0; i < this.fieldMap.length; i++) {
+                if (this.fieldMap[i].mask && this.fieldMap[i].field[0] === fObj.field[0]) {
+                    if (fObj.field.val() === this.fieldMap[i].string) {
+                        fObj.field.val('').removeClass(this.options.emptyMaskClass);
+                    } else if (this.fieldMap[i].optionalIndex > -1) {
+                        this.removeOptionalMask(this.fieldMap[i], fObj.field.val());
                     }
                 }
             }
-        }).Subscribe('onPostFieldValidate', function(fObj) {
-            for(var i = 0; i < fieldMap.length; i++) {
-                if (fieldMap[i].mask && fieldMap[i].field[0] === fObj.field[0] && fObj.field.val().length === 0 && !fieldMap[i].maskOnFocus) {
-                    fObj.field.val(fieldMap[i].string).addClass(opt.emptyMaskClass);
+        },
+        onPostFieldValidate: function(fObj) {
+            for(var i = 0; i < this.fieldMap.length; i++) {
+                if (this.fieldMap[i].mask && this.fieldMap[i].field[0] === fObj.field[0] && fObj.field.val().length === 0 && !this.fieldMap[i].maskOnFocus) {
+                    fObj.field.val(this.fieldMap[i].string).addClass(this.options.emptyMaskClass);
                 }
             }
-        });
-        //Public function to clear all visible masks... useful for for submissions.
-        plInst.ClearMasks = function() {
-            for(var i = 0; i < fieldMap.length; i++) {
-                if ($.trim(fieldMap[i].field.val()) === fieldMap[i].string) {
-                    fieldMap[i].field.val('');
+        },
+        onFieldRemoved: function(fObj) {
+            if (fObj.field.hasClass(this.options.emptyMaskClass)) {
+                fObj.field.removeClass(this.options.emptyMaskClass).off('.mvinputmask').val('');
+                var index;
+                for(var i = 0; i < this.fieldMap.length; i++) {
+                    if (this.fieldMap[i].field[0] === fObj.field[0]) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index) {
+                    this.fieldMap.splice(index, 1);
                 }
             }
-        };
-    };
+        },
+        ClearMasks: function() {
+            for(var i = 0; i < this.fieldMap.length; i++) {
+                if ($.trim(this.fieldMap[i].field.val()) === this.fieldMap[i].string) {
+                    this.fieldMap[i].field.val('');
+                }
+            }
+        },
+        onReady: function() {
+            this.instance.ClearMasks = $.proxy(this.ClearMasks, this);
+        }
+    });
 })(jQuery);
