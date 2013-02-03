@@ -349,6 +349,9 @@
             _refresh: function() {
                 this.field.toggleClass(o.inputClass, !this.valid);
                 for(var i in this.rules) {
+                    if (!this.enabled) {
+                        this.rules[i].valid = true;
+                    }
                     this.rules[i]._refresh();
                 }
                 if (this.container) {
@@ -357,6 +360,10 @@
             },
             _toggle: function(state) {
                 this.enabled = state;
+                if (!this.valid && !state) {
+                    this.valid = true;
+                }
+                this._refresh();
                 _trigger('onFieldToggle', this);
             },
             _toggleRule: function(rule, state) {
@@ -479,6 +486,9 @@
             },
             _toggle: function(state) {
                 this.enabled = state;
+                if (!this.valid && !state) {
+                    this.valid = true;
+                }
                 if (o.appendRulesToFieldClass) {
                     this._.field.toggleClass(this._.name, state);
                 }
