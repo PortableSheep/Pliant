@@ -251,6 +251,18 @@
                 _fields[i]._toggleRule(rule, state);
             }
         },
+        _setState = function(obj) {
+            if ($.isArray(obj)) {
+                for(var i in obj) {
+                    _setState(obj[i]);
+                }
+            } else {
+                var i = _getFieldObjectIndex(obj.field);
+                if (i > -1) {
+                    _fields[i].setstate(obj.rules);
+                }
+            }
+        },
         _resetState = function(field) {
             if (field) {
                 var i = _getFieldObjectIndex(field);
@@ -327,7 +339,9 @@
         _validateRule = function(rule, obj) {
             if (o.rules[rule]) {
                 var ret = o.rules[rule].validate(obj);
-                o.rules[rules]._refresh();
+                if (o.rules[rule].message) {
+                    o.rules[rule]._refresh();
+                }
                 return ret;
             }
             return false;
@@ -373,6 +387,13 @@
                         break;
                     }
                 }
+            },
+            setstate: function(rules) {
+                this.valid = true;
+                for(var i in rules) {
+                    this.valid &= this.rules[i].valid = rules[i];
+                }
+                this._refresh();
             },
             validate: function(data, refreshState, fromChain, fromChange, ruleFilter) {
                 this._.valid = this.valid;
@@ -557,10 +578,14 @@
         this.RemoveField = _removeField;
         this.ToggleField = _toggleField;
         this.ToggleFieldRule = _toggleRule;
+        this.SetState = _setState;
         this.Destroy = function() {
             _resetState();
             _clearFields();
             _events = [];
+        };
+        this.Option = function(k, v) {
+            o[k] = v;
         };
         //Trigger ready event.
         _trigger('onReady');
