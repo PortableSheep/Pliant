@@ -46,7 +46,7 @@
             }
         },
         onFieldRemoved: function(fieldObj) {
-            if (fieldObj.field.hasClass(this.optons.hintClass)) {
+            if (fieldObj.field.hasClass(this.options.hintClass)) {
                 fieldObj.field.removeClass(this.options.hintClass).val('').off('.inputhint');
             }
         }
