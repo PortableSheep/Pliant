@@ -352,7 +352,7 @@
             _destroy: function() {
                 _trigger('onFieldRemoved', this);
                 //Remove the namespaced events.
-                this.field.off('.pliant');
+                this.field.off('.pliant').removeClass(o.inputClass);
                 //Loop the rules, and destroy them.
                 for(var i in this.rules) {
                     this.rules[i]._destroy();
@@ -585,7 +585,11 @@
             _events = [];
         };
         this.Option = function(k, v) {
-            o[k] = v;
+            if (v) {
+                o[k] = v;
+            } else {
+                return o[k];
+            }
         };
         //Trigger ready event.
         _trigger('onReady');
