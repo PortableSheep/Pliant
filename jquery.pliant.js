@@ -451,7 +451,7 @@
                     }
                     if (o.onMessagePlacement) {
                         //Hand off the message placement to the event handler.
-                        _trigger('onMessagePlacement', this._.field, [this.message]);
+                        _trigger('onMessagePlacement', [this._.field, this.message]);
                     } else if (this.container) {
                         //Append to the rules container.
                         $(this.container).append(this.message);
