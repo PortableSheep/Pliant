@@ -27,7 +27,7 @@
                 var obj = $.parseJSON(comments[i]);
                 if (obj && obj instanceof Object && obj.hasOwnProperty('field') && obj.hasOwnProperty('rules')) {
                     obj.field = $(obj.field);
-                    this.instance.AddField(obj);
+                    this.instance.add(obj);
                 }
             }
         }

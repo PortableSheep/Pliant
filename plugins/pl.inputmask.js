@@ -1,4 +1,4 @@
-/*! v1.4 */
+/*! v1.5 */
 (function($) {
     $.pliantPlugin('inputmask', {
         options: {
@@ -278,6 +278,13 @@
                             this.removeOptionalMask(mObj, fObj.field.val());
                         }
                     }
+                }, this)).on('mouseup.mvinputmask', $.proxy(function(e) {
+                    setTimeout($.proxy(function() {
+                        var $this = $(e.target);
+                        if ($this.val().length == 0) {
+                            $this.focus();
+                        }
+                    }, this), 0);
                 }, this));
                 //Check if we need to apply the mask, and remove the optional masking if needed.
                 var val = $.trim(fObj.field.val());

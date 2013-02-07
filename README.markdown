@@ -140,6 +140,8 @@ Utils Change Log
 
 InputMask Change Log
 ---------------------
+* **1.5**
+    * Added fix for remasking when mask is removed on mouseup. IE10 field clear icon clicks are the reason for this fix.
 * **1.4**
     * Refactored plugin to use new plugin format.
 * **1.3**

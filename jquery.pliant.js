@@ -151,7 +151,7 @@
                 }
             }
         },
-        _subscribe = function(e, hndlr) {
+        _on = function(e, hndlr) {
             //If handlers for the event already exist, push this one into the collection. Otherwise, make a new collection.
             if (_events[e]) {
                 _events[e].push(hndlr);
@@ -164,7 +164,7 @@
             //Loop the options, find any starting with 'on' that are functions or arrays. Subscribe them.
             for(var i in o) {
                 if (i.slice(0,2) === 'on' && ($.isFunction(o[i]) || $.isArray(o[i]))) {
-                    _subscribe(i, o[i]);
+                    _on(i, o[i]);
                 }
             }
         },
@@ -213,48 +213,45 @@
                         }
                         _trigger('onFieldAdded', field);
                     }
-                    //Only refresh the UI if needed, since you might not want to when adding an array of fields.
+                    //Only refresh the UI if needed, since you might not want to when adding an array of f`ields.
                     if (refresh) {
-                        _refreshState();
+                        _refresh();
                     }
                 }
             }
         },
-        _clearFields = function() {
+        _clear = function() {
             //Destroy all the fields, reset the collection, reset the invalid count, and refresh the UI.
             for(var i in _fields) {
                 _fields[i]._destroy();
             }
             _fields = [];
             _invalid = 0;
-            _refreshState();
+            _refresh();
         },
-        _removeField = function(field) {
+        _remove = function(field) {
             //Find the field if possible, and destroy it.
             var i = _getFieldObjectIndex(field);
             if (i > -1) {
                 _fields[i]._destroy();
-                _refreshState();
+                _refresh();
             }
         },
-        _toggleField = function(field, enabled) {
+        _toggle = function(enabled, field, rule) {
             //Find the field if possible, and toggle its enabled state.
             var i = _getFieldObjectIndex(field);
             if (i > -1) {
-                _fields[i]._toggle(enabled);
+                if (rule) {
+                    _fields[i]._toggleRule(rule, enabled);
+                } else {
+                    _fields[i]._toggle(enabled);
+                }
             }
         },
-        _toggleRule = function(field, rule, state) {
-            //Find the field if possible, and tell it to toggle a rule if possible.
-            var i = _getFieldObjectIndex(field);
-            if (i > -1) {
-                _fields[i]._toggleRule(rule, state);
-            }
-        },
-        _setState = function(obj) {
+        _state = function(obj) {
             if ($.isArray(obj)) {
                 for(var i in obj) {
-                    _setState(obj[i]);
+                    _state(obj[i]);
                 }
             } else {
                 var i = _getFieldObjectIndex(obj.field);
@@ -263,7 +260,7 @@
                 }
             }
         },
-        _resetState = function(field) {
+        _reset = function(field) {
             if (field) {
                 var i = _getFieldObjectIndex(field);
                 if (i > -1) {
@@ -280,9 +277,9 @@
                     }
                 }
             }
-            _refreshState();
+            _refresh();
         },
-        _refreshState = function() {
+        _refresh = function() {
             _invalid = 0;
             for(var i in _fields) {
                 var field = _fields[i];
@@ -310,7 +307,7 @@
                 }
             }
             //Refresh the state for the user, ensure the return is a bool, trigger the validate event, and return the result.
-            _refreshState();
+            _refresh();
             valid = Boolean(valid);
             _trigger('onFormValidate', [_fields, valid]);
             return valid;
@@ -409,7 +406,7 @@
                         this.valid &= rule._validate(fromChange, data);
                     }
                     if (refreshState) {
-                        _refreshState();
+                        _refresh();
                     }
                     _trigger('onPostFieldValidate', this);
                     if (o.validateOnChange) {
@@ -464,15 +461,17 @@
                     }
                     //Add the rule name as a css class on the field if able.
                     if (o.appendRulesToFieldClass) {
-                        this._.field.addClass(name);
+                        this._.field.addClass(this._.name);
                     }
                 }
             },
             _validate: function(fromChange, args) {
                 if (this.enabled) {
-                    if ((this.validateOnChange && this.validateOnChange !== true && fromChange) && ($.isFunction(this.validateOnChange) && this.validateOnChange.call(this._.field, this) === false || this.validateOnChange === false)) {
-                        this.valid = true;
-                        return this.valid;
+                    if (this.validateOnChange !== undefined && this.validateOnChange !== true && fromChange) {
+                        if ($.isFunction(this.validateOnChange) && this.validateOnChange.call(this._.field, this) === false || this.validateOnChange === false) {
+                            this.valid = true;
+                            return this.valid;
+                        }
                     }
                     this.ResetMessage();
                     var res = this.validate ? this.validate.apply(this._.field, (args ? $.merge([this], args) : [this])) : true;
@@ -562,30 +561,30 @@
         //Add field passed on init.
         _addField(o.fields);
         //Refresh validation state.
-        _refreshState();
+        _refresh();
         //Public vars
         this._fields = _fields;
         //Public functions
-        this.Subscribe = _subscribe;
-        this.Validate = _validate;
-        this.ResetState = _resetState;
-        this.ClearFields = _clearFields;
-        this.ValidateField = _validateField;
-        this.ValidateRule = _validateRule;
-        this.TotalFields = function() { return _fields.length; };
-        this.GetInvalidCount = function() { return _invalid; };
-        this.AddField = function(field) { return _addField(field, true); };
-        this.RemoveField = _removeField;
-        this.ToggleField = _toggleField;
-        this.ToggleFieldRule = _toggleRule;
-        this.SetState = _setState;
-        this.Destroy = function() {
-            _resetState();
-            _clearFields();
+        this.on = _on;
+        this.validate = _validate;
+        this.reset = _reset;
+        this.clear = _clear;
+        this.validateField = _validateField;
+        this.validateRule = _validateRule;
+        this.totalFields = function() { return _fields.length; };
+        this.fields = function() { return _fields; };
+        this.invalidCount = function() { return _invalid; };
+        this.add = function(field) { return _addField(field, true); };
+        this.remove = _remove;
+        this.toggle = _toggle;
+        this.state = _state;
+        this.destroy = function() {
+            _reset();
+            _clear();
             _events = [];
         };
-        this.Option = function(k, v) {
-            if (v) {
+        this.option = function(k, v) {
+            if (v !== undefined) {
                 o[k] = v;
             } else {
                 return o[k];
