@@ -47,14 +47,14 @@
                         if (fieldObj.rules[i].decorate.sync && !fieldObj.field._origHide && !fieldObj.field._origShow) {
                             fieldObj.field._origHide = fieldObj.field.hide;
                             fieldObj.field._origShow = fieldObj.field.show;
-                            fieldObj.field.hide = function() {
-                                this._origHide.call(this);
-                                _handleHide(fieldObj);
-                            };
-                            fieldObj.field.show = function() {
-                                this._origShow.call(this);
-                                _handleShow(fieldObj);
-                            };
+                            fieldObj.field.hide = $.proxy(function() {
+                                fieldObj.field._origHide.call(fieldObj.field);
+                                this._handleHide(fieldObj);
+                            }, this);
+                            fieldObj.field.show = $.proxy(function() {
+                                fieldObj.field._origShow.call(fieldObj.field);
+                                this._handleShow(fieldObj);
+                            }, this);
                         }
                         if (!fieldObj.field.is(':visible')) {
                             fieldObj.rules[i].decorate.content.hide();
@@ -70,18 +70,16 @@
                 }
             }
         },
-        onFieldToggle: function(isEnabled) {
-            for(var i in this.rules) {
-                if (this.rules[i].decorate && this.rules[i].decorate.sync) {
-                    this.rules[i].decorate.content.toggle(isEnabled);
+        onFieldToggle: function(fieldObj) {
+            for(var i in fieldObj.rules) {
+                if (fieldObj.rules[i].decorate && fieldObj.rules[i].decorate.sync) {
+                    fieldObj.rules[i].decorate.content.toggle(fieldObj.enabled);
                 }
             }
         },
-        onFieldRuleToggle: function(isEnabled, name) {
-            for(var i in this.rules) {
-                if (name == i && this.rules[i].decorate && this.rules[i].decorate.sync) {
-                    this.rules[i].decorate.content.toggle(isEnabled);
-                }
+        onRuleToggle: function(name, fieldObj, ruleObj) {
+            if (ruleObj.decorate && ruleObj.decorate.sync) {
+                ruleObj.decorate.content.toggle(ruleObj.enabled);
             }
         }
     });

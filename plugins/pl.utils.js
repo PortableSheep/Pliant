@@ -16,7 +16,7 @@
 									var props = [];
 									for(var key in rule) {
 										var val = rule[key];
-										if (key == '_' || key == 'valid' || key == 'enabled' || key == 'message' || val === undefined ||  ($.isFunction(val) && !includeFunctions || $.isPlainObject(val) && !includeObjects)) {
+										if (key == '_' || key == 'valid' || key == 'enabled' || key == 'message' || val === undefined || ($.isFunction(val) && !includeFunctions) || ($.isPlainObject(val) && !includeObjects)) {
 											continue;
 										} else if (val instanceof jQuery) {
 											val = val.attr('id');

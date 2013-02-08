@@ -48,6 +48,10 @@
         onFieldRemoved: function(fieldObj) {
             if (fieldObj.field.hasClass(this.options.hintClass)) {
                 fieldObj.field.removeClass(this.options.hintClass).val('').off('.inputhint');
+                if (fieldObj.field.data('isPassword')) {
+                    fieldObj.field.get(0).type = 'password';
+                    fieldObj.field.removeData('isPassword');
+                }
             }
         }
     });
