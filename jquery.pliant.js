@@ -55,7 +55,7 @@
             validateOnSubmitScope: null,
             inputSelector: ':input[type!=button]',
             messageElement: '<label />',
-            messageWrapElement: null,
+            messageWrap: null,
             messageContainer: null,
             messageElementClass: 'pl-element-error',
             messageWrapClass: 'pl-wrap-error',
