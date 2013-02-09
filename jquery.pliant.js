@@ -1,6 +1,6 @@
 /*!
  * Pliant jQuery plugin v4.0 - http://portablesheep.github.com/Pliant/
- * Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses. Same as jQuery.
+ * Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
  */
 (function($) {
     'use strict';
