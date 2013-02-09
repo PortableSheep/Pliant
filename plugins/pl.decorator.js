@@ -1,4 +1,4 @@
-/*! v1.3 */
+/*! v1.2.0 */
 (function($) {
     $.pliantPlugin('decorator', {
         options: {},

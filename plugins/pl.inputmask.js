@@ -1,4 +1,4 @@
-/*! v1.5 */
+/*! v1.2.1 */
 (function($) {
     $.pliantPlugin('inputmask', {
         options: {
