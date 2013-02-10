@@ -8,7 +8,7 @@
 		"forms",
 		"valid"
 	],
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"author": {
 		"name": "Michael Gunderson",
 		"url": "https://github.com/PortableSheep"
@@ -16,18 +16,18 @@
 	"maintainers": [
 		{
 			"name": "Michael Gunderson",
-			"email": "admin@portablesheep.com",
+			"email": "michael@portablesheep.com",
 			"url": "https://github.com/PortableSheep"
 		}
 	],
 	"licenses": [
 		{
 			"type": "MIT",
-			"url": "MIT-LICENSE.txt"
+			"url": "https://raw.github.com/PortableSheep/Pliant/master/MIT-LICENSE.txt"
 		},
 		{
 			"type": "GPLv2",
-			"url": "GPL-LICENSE.txt"
+			"url": "https://raw.github.com/PortableSheep/Pliant/master/GPL-LICENSE.txt"
 		}
 	],
 	"homepage": "http://portablesheep.github.com/Pliant/",

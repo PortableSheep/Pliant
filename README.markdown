@@ -9,6 +9,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **2.0.1**
+    * Bumped patch due to changes in jquery plugin manifest.
 * **2.0.0**
     * Changed pliant plugin architecture to be similar to UI plugins.
     * Changed all plugins to new architecture.

@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v2.0 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v2.0.1 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
  */
 (function($) {
