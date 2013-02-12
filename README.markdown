@@ -11,6 +11,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **2.0.2**
+    * Fixed 'valid' rule property being ignored on init.
 * **2.0.1**
     * Bumped patch due to changes in jquery plugin manifest.
 * **2.0.0**

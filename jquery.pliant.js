@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v2.0.1 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v2.0.2 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
  */
 (function($) {
@@ -213,7 +213,7 @@
                         }
                         _trigger('onFieldAdded', field);
                     }
-                    //Only refresh the UI if needed, since you might not want to when adding an array of f`ields.
+                    //Only refresh the UI if needed, since you might not want to when adding an array of fields.
                     if (refresh) {
                         _refresh();
                     }
@@ -358,13 +358,14 @@
                 _fields.splice(i, 1);
             },
             _refresh: function() {
-                this.field.toggleClass(o.inputClass, !this.valid);
                 for(var i in this.rules) {
                     if (!this.enabled) {
                         this.rules[i].valid = true;
                     }
+                    this.valid &= this.rules[i].valid;
                     this.rules[i]._refresh();
                 }
+                this.field.toggleClass(o.inputClass, !this.valid);
                 if (this.container) {
                     this.container.toggle(this.container.find('.' + o.messageElementClass).filter(':plVisible').length > 0);
                 }
