@@ -1,5 +1,5 @@
 /*!
- * Pliant jQuery plugin v2.0.2 - http://portablesheep.github.com/Pliant/
+ * Pliant jQuery plugin v2.0.3 - http://portablesheep.github.com/Pliant/
  * Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
  */
 (function($) {
@@ -241,11 +241,7 @@
             //Find the field if possible, and toggle its enabled state.
             var i = _getFieldObjectIndex(field);
             if (i > -1) {
-                if (rule) {
-                    _fields[i]._toggleRule(rule, enabled);
-                } else {
-                    _fields[i]._toggle(enabled);
-                }
+                _fields[i]._toggle(enabled, rule);
             }
         },
         _state = function(obj) {
@@ -370,20 +366,21 @@
                     this.container.toggle(this.container.find('.' + o.messageElementClass).filter(':plVisible').length > 0);
                 }
             },
-            _toggle: function(state) {
-                this.enabled = state;
-                if (!this.valid && !state) {
-                    this.valid = true;
-                }
-                this._refresh();
-                _trigger('onFieldToggle', this);
-            },
-            _toggleRule: function(rule, state) {
-                for(var i in this.rules) {
-                    if (i === rule) {
-                        this.rules[i]._toggle(state);
-                        break;
+            _toggle: function(state, rule) {
+                if (rule) {
+                    for(var i in this.rules) {
+                        if (i === rule) {
+                            this.rules[i]._toggle(state);
+                            break;
+                        }
                     }
+                } else {
+                    this.enabled = state;
+                    if (!this.valid && !state) {
+                        this.valid = true;
+                    }
+                    this._refresh();
+                    _trigger('onFieldToggle', this);
                 }
             },
             setstate: function(rules) {
