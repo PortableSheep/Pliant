@@ -12,6 +12,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **2.0.4**
+    * Version bump due to inputmask plugin changes.
 * **2.0.3**
     * Refactored the toggle function.
 * **2.0.2**
@@ -155,6 +157,8 @@ Utils Change Log
 
 InputMask Change Log
 ---------------------
+* **1.3.0**
+    * Decoupled mask logic into a separate project called "PliantMask", and converted the plugin to wrap it.
 * **1.2.1**
     * Added fix for remasking when mask is removed on mouseup. IE10 field clear icon clicks are the reason for this fix.
 * **1.2.0**

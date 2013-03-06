@@ -1,13 +1,24 @@
 /*!
- * Pliant jQuery plugin v2.0.3 - http://portablesheep.github.com/Pliant/
- * Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
- */
+     ____  ___             __
+    / __ \/ (_)___ _____  / /_
+   / /_/ / / / __ `/ __ \/ __/
+  / ____/ / / /_/ / / / / /_
+ /_/   /_/_/\__,_/_/ /_/\__/
+jQuery validation plugin v2.0.4 - http://portablesheep.github.com/Pliant/
+Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
+*/
 (function($) {
     'use strict';
 
     //Custom selector for checking if items are visible, even if their parent is hidden.
     $.expr[':'].plVisible = function(a) { return ($(a).css('display') != 'none'); };
 
+    /*     ___  __          _        ____     __          ___               ______  __     _         __
+          / _ \/ /_ _____ _(_)__    /  _/__  / /____ ____/ _/__ ________  _/_/ __ \/ /    (_)__ ____/ /_
+         / ___/ / // / _ `/ / _ \  _/ // _ \/ __/ -_) __/ _/ _ `/ __/ -_)/_// /_/ / _ \  / / -_) __/ __/
+        /_/  /_/\_,_/\_, /_/_//_/ /___/_//_/\__/\__/_/ /_/ \_,_/\__/\__/_/  \____/_.__/_/ /\__/\__/\__/
+                    /___/                                                            |___/
+    */
     //Create the global pliantPlugin API if it's mising.
     $.pliantPlugin = function(name, base) {
         pliantPlugins[name] = base;
@@ -37,7 +48,12 @@
         instance: null, options: {}, _create: $.noop, _ready: $.noop
     };
 
-    //Main plugin.
+    /*     __  ___     _        ___  __          _
+          /  |/  /__ _(_)__    / _ \/ /_ _____ _(_)__
+         / /|_/ / _ `/ / _ \  / ___/ / // / _ `/ / _ \
+        /_/  /_/\_,_/_/_//_/ /_/  /_/\_,_/\_, /_/_//_/
+                                         /___/
+    */
     $.fn.pliant = function(opt) {
         var o = $.extend(true, {
             fields: [],
@@ -78,49 +94,11 @@
                 }
             }
         }, opt), inst = this, $this = $(this), _plugins = {}, _events = {}, _fields = [], _invalid = 0,
-        //Field object.
-        _pliantField = function(obj) {
-            this._ = { valid: true };
-            this.valid = this.enabled = true;
-            this.validateOnChange = this.container = this.field = null;
-            this.rules = {};
-            //Pull in the object properties from the defined field.
-            for(var i in obj) {
-                if (i !== 'rules' && i !== '_') {
-                    this[i] = obj[i];
-                }
-            }
-            //Hook up the change validation if needed.
-            if (this.validateOnChange || o.validateOnChange && this.validateOnChange !== false) {
-                this.field.on('change.pliant', $.proxy(function() {
-                    this.validate(null, true, false, true);
-                }, this));
-            }
-            //Hide the field level error container if available.
-            if (this.container) {
-                this.container.hide();
-            }
-            //Add all the rules.
-            for(var i in obj.rules) {
-                this.rules[i] = new _pliantRule(i, this, obj.rules[i]);
-            }
-        },
-        //Rule object.
-        _pliantRule = function(name, fobj, rule) {
-            this.message = this.validate = this.inherit = this.messageWrap = this.container = this.validateOnChange = this.expectedResult = null;
-            this._ = { message: null, field: fobj.field, name: name };
-            this.valid = this.enabled = true;
-            //Pull in the object properties from the defined rule.
-            for(var i in rule) {
-                if (i !== '_') {
-                    this[i] = rule[i];
-                }
-            }
-            if (!this.container && fobj.container) {
-                this.container = fobj.container;
-            }
-            this._init();
-        },
+        /*     ____     __                    __  __  ___    __  __           __
+              /  _/__  / /____ _______  ___ _/ / /  |/  /__ / /_/ /  ___  ___/ /__
+             _/ // _ \/ __/ -_) __/ _ \/ _ `/ / / /|_/ / -_) __/ _ \/ _ \/ _  (_-<
+            /___/_//_/\__/\__/_/ /_//_/\_,_/_/ /_/  /_/\__/\__/_//_/\___/\_,_/___/
+        */
         _loadPlugins = function() {
             if (pliantPlugins && o.plugins) {
                 for(var plugin in o.plugins) {
@@ -340,7 +318,38 @@
             return false;
         };
 
-        //Field prototype.
+        /*     _____     __   __  ____  __     _         __
+              / __(_)__ / /__/ / / __ \/ /    (_)__ ____/ /_
+             / _// / -_) / _  / / /_/ / _ \  / / -_) __/ __/
+            /_/ /_/\__/_/\_,_/  \____/_.__/_/ /\__/\__/\__/
+                                         |___/
+        */
+        var _pliantField = function(obj) {
+            this._ = { valid: true };
+            this.valid = this.enabled = true;
+            this.validateOnChange = this.container = this.field = null;
+            this.rules = {};
+            //Pull in the object properties from the defined field.
+            for(var i in obj) {
+                if (i !== 'rules' && i !== '_') {
+                    this[i] = obj[i];
+                }
+            }
+            //Hook up the change validation if needed.
+            if (this.validateOnChange || o.validateOnChange && this.validateOnChange !== false) {
+                this.field.on('change.pliant', $.proxy(function() {
+                    this.validate(null, true, false, true);
+                }, this));
+            }
+            //Hide the field level error container if available.
+            if (this.container) {
+                this.container.hide();
+            }
+            //Add all the rules.
+            for(var i in obj.rules) {
+                this.rules[i] = new _pliantRule(i, this, obj.rules[i]);
+            }
+        };
         _pliantField.prototype = {
             _destroy: function() {
                 _trigger('onFieldRemoved', this);
@@ -417,7 +426,28 @@
                 return this.valid;
             }
         };
-        //Rule prototype.
+
+        /*     ___       __      ____  __     _         __
+              / _ \__ __/ /__   / __ \/ /    (_)__ ____/ /_
+             / , _/ // / / -_) / /_/ / _ \  / / -_) __/ __/
+            /_/|_|\_,_/_/\__/  \____/_.__/_/ /\__/\__/\__/
+                                        |___/
+        */
+        var _pliantRule = function(name, fobj, rule) {
+            this.message = this.validate = this.inherit = this.messageWrap = this.container = this.validateOnChange = this.expectedResult = null;
+            this._ = { message: null, field: fobj.field, name: name };
+            this.valid = this.enabled = true;
+            //Pull in the object properties from the defined rule.
+            for(var i in rule) {
+                if (i !== '_') {
+                    this[i] = rule[i];
+                }
+            }
+            if (!this.container && fobj.container) {
+                this.container = fobj.container;
+            }
+            this._init();
+        };
         _pliantRule.prototype = {
             _init: function() {
                 //Get the parent/base rule, and it's inherited rule if available.
@@ -524,6 +554,12 @@
             }
         };
 
+        /*     ____     _ __    __             _
+              /  _/__  (_) /_  / /  ___  ___ _(_)___
+             _/ // _ \/ / __/ / /__/ _ \/ _ `/ / __/
+            /___/_//_/_/\__/ /____/\___/\_, /_/\__/
+                                       /___/
+        */
         //Hide the message container if possible.
         if (o.hideMessageContainerOnLoad && o.messageContainer) {
             o.messageContainer.hide();
