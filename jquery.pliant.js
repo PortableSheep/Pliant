@@ -4,7 +4,7 @@
    / /_/ / / / __ `/ __ \/ __/
   / ____/ / / /_/ / / / / /_
  /_/   /_/_/\__,_/_/ /_/\__/
-jQuery validation plugin v2.0.4 - http://portablesheep.github.com/Pliant/
+jQuery validation plugin v2.0.5 - http://portablesheep.github.com/Pliant/
 Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
 */
 (function($) {
@@ -465,6 +465,10 @@ Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Vers
                     this._.message = this.message;
                     //Style the message, and wrap it in the required element.
                     this.message = $(o.messageElement).addClass(o.messageElementClass).append(this.message);
+                    //If the message is a label, add the for attribute.
+                    if (this.message.is('label')) {
+                        this.message.attr('for', this._.field.attr('id'));
+                    }
                     //If a message wrap element is defined, wrap the message in it, and add the class.
                     if (o.messageWrap) {
                         this.message = $(o.messageWrap).addClass(o.messageWrapClass).append(this.message);

@@ -12,6 +12,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **2.0.5**
+    * Issue #14 by heumann: Added "for" attribute to validation messages if they're label elements.
 * **2.0.4**
     * Version bump due to inputmask plugin changes.
 * **2.0.3**
