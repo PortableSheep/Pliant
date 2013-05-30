@@ -12,6 +12,10 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **2.0.6**
+    * Issue #15 by amurf: Allow "field" to contain an array of fields.
+    * Added bower.json definition.
+    * Fixed rule option inheritance bug due to bad comparison treating 0 as null.
 * **2.0.5**
     * Issue #14 by heumann: Added "for" attribute to validation messages if they're label elements.
 * **2.0.4**

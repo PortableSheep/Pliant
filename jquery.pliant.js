@@ -4,7 +4,7 @@
    / /_/ / / / __ `/ __ \/ __/
   / ____/ / / /_/ / / / / /_
  /_/   /_/_/\__,_/_/ /_/\__/
-jQuery validation plugin v2.0.5 - http://portablesheep.github.com/Pliant/
+jQuery validation plugin v2.0.6 - http://portablesheep.github.com/Pliant/
 Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
 */
 (function($) {
@@ -167,7 +167,16 @@ Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Vers
                 if ($.isArray(obj)) {
                     //We're adding a collection of fields... loop them and add each one.
                     for(var i in obj) {
-                        _addField(obj[i]);
+                        if (obj[i].field.length > 1) {
+                            $.each(obj[i].field, function() {
+                                _addField({
+                                    field: $(this),
+                                    rules: obj[i].rules
+                                });
+                            });
+                        } else {
+                            _addField(obj[i]);
+                        }
                     }
                 } else if (obj.field instanceof String || (obj.field !== undefined && obj.field.attr('id'))) {
                     //Find the index for the field, if it already exists.
@@ -523,7 +532,7 @@ Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Vers
             _extend: function(from) {
                 if (from) {
                     for(var i in from) {
-                        if (!this[i] && i !== 'inherit') {
+                        if (this[i] == null && i !== 'inherit') {
                             this[i] = from[i];
                         }
                     }
