@@ -15,9 +15,11 @@
     <script src="javascripts/jquery-ui-1.8.20.custom.min.js"></script>
     <script src="javascripts/shCore.js"></script>
     <script src="javascripts/shBrushJScript.js"></script>
-    <script src="https://raw.github.com/PortableSheep/Pliant/master/jquery.pliant.min.js"></script>
-    <script src="https://raw.github.com/PortableSheep/Pliant/master/plugins/pl.inputhint.min.js"></script>
-    <script src="https://raw.github.com/PortableSheep/Pliant/master/plugins/pl.inputmask.min.js"></script>
+    <script src="https://rawgithub.com/PortableSheep/Pliant/master/jquery.pliant.min.js"></script>
+    <script src="https://rawgithub.com/PortableSheep/Pliant/master/plugins/pl.htmlrules.min.js"></script>
+    <script src="https://rawgithub.com/PortableSheep/Pliant/master/plugins/pliantmask/jquery.pliantmask.min.js"></script>
+    <script src="https://rawgithub.com/PortableSheep/Pliant/master/plugins/pl.inputmask.min.js"></script>
+    <script src="https://rawgithub.com/PortableSheep/Pliant/master/plugins/pl.inputhint.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
     <!--[if lt IE 9]>
@@ -239,7 +241,11 @@
           ]
         });
         var commentPl = $('#htmlForm').pliant({
-            parseMarkup: true
+          plugins: {
+            htmlrules: {
+              parseOnInit: true
+            }
+          }
         });
         $('#commentAddField').one('click', function() {
           $('#htmlPL').append('<!-- { "field": "#dynamicField", "rules": {"required": {"message": "Dynamic field required!"}}} --><label>Dynamic:</label><input id="dynamicField" type="text" />');
@@ -248,6 +254,7 @@
         });
         $('#maskForm').pliant({
             plugins: {
+              pliantmask: {},
               inputmask: {
                 definitions: {
                     '9': '[0-9]',
@@ -493,7 +500,7 @@
               </tr>
               <tr>
                 <td>
-                  <strong>validateSubmit</strong>
+                  <strong>validateOnSubmit</strong>
                 </td>
                 <td>
                   true
@@ -504,7 +511,7 @@
               </tr>
               <tr>
                 <td>
-                  <strong>validateSubmitSelector</strong>
+                  <strong>validateOnSubmitSelector</strong>
                 </td>
                 <td>
                   NULL
@@ -515,7 +522,7 @@
               </tr>
               <tr>
                 <td>
-                  <strong>validateSubmitOn</strong>
+                  <strong>validateOnSubmitEvent</strong>
                 </td>
                 <td>
                   'click'
@@ -526,7 +533,7 @@
               </tr>
               <tr>
                 <td>
-                  <strong>validateSubmitScope</strong>
+                  <strong>validateOnSubmitScope</strong>
                 </td>
                 <td>
                   NULL
@@ -544,17 +551,6 @@
                 </td>
                 <td>
                   The default jQuery selector for finding fields when the <strong><i>reconcileFieldOrder</i></strong> option is enabled.
-                </td>
-              </tr>
-              <tr>
-                <td>
-                 <strong>parseMarkup</strong>
-                </td>
-                <td>
-                  false
-                </td>
-                <td>
-                  If true, Pliant will automatically find any HTML comments in the JSON format, and try to automatically parse them for field validation.
                 </td>
               </tr>
               <tr>
@@ -996,7 +992,11 @@ $('#chainForm').pliant({
             <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 var commentPl = $('#htmlForm').pliant({
-    parseMarkup: true
+  plugins: {
+    htmlrules: {
+      parseOnInit: true
+    }
+  }
 });
 $('#commentAddField').one('click', function() {
   $('#htmlPL').append('<!-- { "field": "#dynamicField", "rules": {"required": {"message": "Dynamic field required!"}}} --><label>Dynamic:</label><input id="dynamicField" type="text" />');
