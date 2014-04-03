@@ -181,6 +181,8 @@ HTMLRules Change Log
 
 InputHint Change Log
 ---------------------
+* **1.1.1**
+    * Fixed #17: Hint shouldn't be applied to fields that already have a value when loading.
 * **1.1.0**
     * Refactored plugin to use new plugin format.
 * **1.0.0**
