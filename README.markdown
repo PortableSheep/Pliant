@@ -12,6 +12,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **2.0.7**
+    * Added ability to assign a function to the chain property of a field.
 * **2.0.6**
     * Issue #15 by amurf: Allow "field" to contain an array of fields.
     * Added bower.json definition.
