@@ -31,6 +31,9 @@
         .plHint {
             color: gray !important;
         }
+        #dateLabel {
+            color: red;
+        }
     </style>
     <script type="text/javascript">
         $(function() {
@@ -144,8 +147,15 @@
                         }
                     ],
                     focusFirstInvalidField: true,
-                    reconcileFieldOrder: true
+                    reconcileFieldOrder: true,
+                    onFieldValidate: function() {
+                        console.log(arguments);
+                    }
                 });
+
+            val.on('onPostFieldValidate', function(fObj) {
+                console.log(this, fObj, fObj.isValid);
+            });
             datePick.datepicker({
                 showOn: "button",
                 buttonImage: "calendar.gif",

@@ -20,6 +20,7 @@ Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Vers
                 'A': '[A-Za-z0-9]',
                 '*': '[A-Za-z0-9_\/-]'
             },
+            enablePasting: true,
             resetIncompleteMasks: true,
             emptyMaskClass: 'input-mask',
             fields: [],
@@ -221,6 +222,7 @@ Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Vers
                 }, mask));
                 mObj.field = field;
                 field.on('keypress.plinputmask', $.proxy(function(e) {
+                    console.log('KEYPRESS:', e.which);
                     var $this = $(e.target);
                     if (!e.ctrlKey && !e.altKey && !e.metaKey && e.which >= 32) {
                         insert(mObj, $this.val().split(''), String.fromCharCode(e.which), null, true);
@@ -228,7 +230,11 @@ Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Vers
                     } else if (e.which === 13) {
                         $this.blur();
                     }
+                }, this)).on('input.plinputmask', $.proxy(function(e) {
+                    console.log(e);
                 }, this)).on('keydown.plinputmask', $.proxy(function(e) {
+                    if (e.which === 229) { e.preventDefault(); return false;}
+                    console.log(e.which);
                     var field = e.target;
                     var pos = getCaret(field), value = $(field).val().split('');
                     if (e.which == 8 && pos.start === pos.end && pos.start-1 >= 0) {
@@ -251,13 +257,17 @@ Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Vers
                         return false;
                     }
                 }, this)).on('paste.plinputmask', $.proxy(function(e) {
-                    var $this = $(e.target), currVal = $this.val().split(''), pos = getCaret($this[0]);
-                    if (pos.start < mObj.mask.length) {
-                        $this.val('');
-                        setTimeout(function() {
-                            insert(mObj, currVal, $this.val(), pos, true);
-                            mObj.lastAction = 'p';
-                        }, 0);
+                    if (o.enablePasting) {
+                        var $this = $(e.target), currVal = $this.val().split(''), pos = getCaret($this[0]);
+                        if (pos.start < mObj.mask.length) {
+                            $this.val('');
+                            setTimeout(function() {
+                                insert(mObj, currVal, $this.val(), pos, true);
+                                mObj.lastAction = 'p';
+                            }, 0);
+                        } else {
+                            return false;
+                        }
                     } else {
                         return false;
                     }
