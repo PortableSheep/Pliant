@@ -4,7 +4,7 @@
    / /_/ / / / __ `/ __ \/ __/
   / ____/ / / /_/ / / / / /_
  /_/   /_/_/\__,_/_/ /_/\__/
-jQuery validation plugin v2.0.7 - http://portablesheep.github.com/Pliant/
+jQuery validation plugin v2.0.8 - http://portablesheep.github.com/Pliant/
 Copyright 2011-2013, Michael Gunderson - Dual licensed under the MIT or GPL Version 2 licenses.
 */
 (function($) {

@@ -1,6 +1,6 @@
 {
 	"name": "pliant",
-	"version": "2.0.7",
+	"version": "2.0.8",
 	"main": "./jquery.pliant.js",
 	"dependencies": {
 		"jquery": ">=1.8"

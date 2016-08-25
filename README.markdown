@@ -2,7 +2,6 @@ Pliant - jQuery Validation Plugin
 ================================
 
 [![Build Status](https://travis-ci.org/PortableSheep/Pliant.png)](https://travis-ci.org/PortableSheep/Pliant)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/PortableSheep/Pliant/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Pliant is a jQuery plugin for form validation, that tries to be very flexible as far as validation rules are concerned. It also allows defining rules via HTML comments.
 
@@ -12,6 +11,8 @@ Check out http://portablesheep.github.com/Pliant/ for some demos, and the WIKI f
 
 Pliant Change Log
 ---------------------
+* **2.0.8**
+    * Fixed NPM links to repository.
 * **2.0.7**
     * Added ability to assign a function to the chain property of a field.
 * **2.0.6**

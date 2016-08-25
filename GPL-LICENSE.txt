@@ -1,5 +1,5 @@
 Pliant - jQuery form validation plugin.
-Copyright (C) 2011-2013  Michael D Gunderson - admin@portablesheep.com
+Copyright (C) 2011-2016  Michael D Gunderson - michael@portablesheep.com
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
