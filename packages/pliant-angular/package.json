@@ -1,0 +1,21 @@
+{
+  "name": "@pliant/angular",
+  "version": "0.1.0",
+  "description": "Angular adapter for Pliant core validation engine.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "@angular/core": ">=14",
+    "@angular/forms": ">=14",
+    "@pliant/core": "^0.1.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  }
+}

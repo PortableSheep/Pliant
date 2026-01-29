@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const numericRule = () => ({\n  message: \"Numeric only\",\n  validate: value => {\n    if (value === null || value === undefined || value === \"\") return null;\n    return /^\\d+$/i.test(String(value)) ? null : {\n      code: \"numeric\"\n    };\n  }\n});","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

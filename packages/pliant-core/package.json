@@ -1,0 +1,22 @@
+{
+  "name": "@pliant/core",
+  "version": "0.1.0",
+  "description": "Pliant core validation engine (framework-agnostic).",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist-esm/index.js",
+  "browser": "dist-esm/pliant-core.bundle.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "dist-esm"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.esm.json && npm run bundle",
+    "bundle": "esbuild dist-esm/index.js --bundle --format=esm --outfile=dist-esm/pliant-core.bundle.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2"
+  }
+}

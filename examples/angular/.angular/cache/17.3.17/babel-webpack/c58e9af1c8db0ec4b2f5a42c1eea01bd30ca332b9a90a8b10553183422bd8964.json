@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const inheritRule = (base, overrides = {}) => ({\n  inherit: base,\n  ...overrides\n});","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

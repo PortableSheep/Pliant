@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { inheritRule } from \"../helpers\";\nexport const maxLengthRule = defaults => inheritRule(\"length\", {\n  options: {\n    max: defaults.max\n  },\n  message: \"Too long\"\n});","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}
