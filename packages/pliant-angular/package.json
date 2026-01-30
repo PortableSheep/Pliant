@@ -3,6 +3,18 @@
   "version": "0.1.0",
   "description": "Angular adapter for Pliant core validation engine.",
   "license": "MIT",
+  "homepage": "https://github.com/PortableSheep/Pliant#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PortableSheep/Pliant.git",
+    "directory": "packages/pliant-angular"
+  },
+  "bugs": {
+    "url": "https://github.com/PortableSheep/Pliant/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -3,6 +3,18 @@
   "version": "0.1.0",
   "description": "Pliant core validation engine (framework-agnostic).",
   "license": "MIT",
+  "homepage": "https://github.com/PortableSheep/Pliant#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PortableSheep/Pliant.git",
+    "directory": "packages/pliant-core"
+  },
+  "bugs": {
+    "url": "https://github.com/PortableSheep/Pliant/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "module": "dist-esm/index.js",
   "browser": "dist-esm/pliant-core.bundle.js",

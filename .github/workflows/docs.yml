@@ -1,0 +1,104 @@
+name: Deploy Site & Documentation
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'docs/**'
+      - 'site/**'
+      - 'examples/**'
+      - 'packages/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+# Sets permissions for GitHub Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: npm ci
+
+      - name: Build documentation
+        working-directory: docs
+        run: npm run docs:build
+
+      - name: Build Angular example
+        working-directory: examples/angular
+        run: |
+          npm ci
+          npx ng build --configuration production --base-href /Pliant/examples/angular/
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site/docs
+          mkdir -p _site/examples/core
+          mkdir -p _site/examples/angular
+
+          # Copy landing page
+          cp site/index.html _site/
+
+          # Copy documentation
+          cp -r docs/.vitepress/dist/* _site/docs/
+
+          # Copy core example (static files)
+          cp examples/core/index.html _site/examples/core/
+          cp examples/core/app.js _site/examples/core/
+          
+          # Copy the pliant-core bundle for the core example
+          mkdir -p _site/packages/pliant-core/dist-esm
+          cp packages/pliant-core/dist-esm/pliant-core.bundle.js _site/packages/pliant-core/dist-esm/
+
+          # Copy Angular example build (output is in dist/browser for newer Angular)
+          if [ -d "examples/angular/dist/browser" ]; then
+            cp -r examples/angular/dist/browser/* _site/examples/angular/
+          else
+            cp -r examples/angular/dist/* _site/examples/angular/
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

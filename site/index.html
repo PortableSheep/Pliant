@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pliant – Modern Validation for JavaScript & Angular</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A framework-agnostic validation library with rule inheritance, structured errors, and Angular integration." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --primary-light: #6366f1;
+        --primary-dark: #4338ca;
+        --accent: #06b6d4;
+        --success: #10b981;
+        --text: #0f172a;
+        --text-muted: #64748b;
+        --surface: #ffffff;
+        --border: #e2e8f0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 24px 80px;
+      }
+
+      /* Hero */
+      .hero {
+        text-align: center;
+        padding: 60px 24px 80px;
+      }
+
+      .hero-logo {
+        font-size: 80px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.85) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 20px;
+        letter-spacing: -0.04em;
+      }
+
+      .hero-tagline {
+        font-size: 22px;
+        color: rgba(255,255,255,0.9);
+        margin: 0 0 32px;
+        font-weight: 500;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .badges {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+      }
+
+      .badge {
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+        background: rgba(255,255,255,0.2);
+        color: #fff;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.3);
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary {
+        background: #fff;
+        color: var(--primary);
+      }
+
+      .btn-primary:hover {
+        background: #f1f5f9;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      }
+
+      .btn-secondary {
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.3);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255,255,255,0.25);
+        transform: translateY(-2px);
+      }
+
+      /* Cards Section */
+      .section-title {
+        text-align: center;
+        color: #fff;
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0 0 16px;
+      }
+
+      .section-desc {
+        text-align: center;
+        color: rgba(255,255,255,0.8);
+        font-size: 18px;
+        margin: 0 0 48px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 24px;
+        margin-bottom: 80px;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+      }
+
+      .card-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+
+      .card-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0 0 8px;
+        color: var(--text);
+      }
+
+      .card-package {
+        font-family: ui-monospace, SFMono-Regular, monospace;
+        font-size: 14px;
+        color: var(--primary);
+        background: #eef2ff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 16px;
+      }
+
+      .card-desc {
+        color: var(--text-muted);
+        margin: 0 0 24px;
+        font-size: 15px;
+      }
+
+      .card-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 24px;
+      }
+
+      .card-features li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        font-size: 14px;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .card-features li:last-child {
+        border-bottom: none;
+      }
+
+      .card-features .check {
+        color: var(--success);
+        font-weight: bold;
+      }
+
+      .card-btn {
+        display: block;
+        text-align: center;
+        padding: 14px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: #fff;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+
+      .card-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+      }
+
+      .card-btn.angular {
+        background: linear-gradient(135deg, #dd0031 0%, #c3002f 100%);
+      }
+
+      .card-btn.angular:hover {
+        box-shadow: 0 8px 25px rgba(221, 0, 49, 0.4);
+      }
+
+      /* Features */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 80px;
+      }
+
+      .feature {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 16px;
+        padding: 28px;
+        color: #fff;
+      }
+
+      .feature-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+      }
+
+      .feature-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 8px;
+      }
+
+      .feature-desc {
+        font-size: 14px;
+        color: rgba(255,255,255,0.8);
+        margin: 0;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 40px 24px;
+        color: rgba(255,255,255,0.7);
+        font-size: 14px;
+      }
+
+      footer a {
+        color: #fff;
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 640px) {
+        .hero-logo {
+          font-size: 48px;
+        }
+
+        .hero-tagline {
+          font-size: 18px;
+        }
+
+        .cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero">
+        <h1 class="hero-logo">Pliant</h1>
+        <p class="hero-tagline">
+          Modern validation for JavaScript & TypeScript with rule inheritance, structured errors, and framework adapters.
+        </p>
+        <div class="badges">
+          <span class="badge">✨ Framework-Agnostic</span>
+          <span class="badge">🔗 Rule Inheritance</span>
+          <span class="badge">📦 Tree-Shakeable</span>
+          <span class="badge">🎯 TypeScript First</span>
+          <span class="badge">⚡ Zero Dependencies</span>
+        </div>
+        <div class="hero-buttons">
+          <a href="./docs/" class="btn btn-primary">
+            📚 Documentation
+          </a>
+          <a href="https://github.com/PortableSheep/Pliant" class="btn btn-secondary" target="_blank">
+            ⭐ GitHub
+          </a>
+        </div>
+      </header>
+
+      <section>
+        <h2 class="section-title">Interactive Examples</h2>
+        <p class="section-desc">
+          See Pliant in action with our live demos. Try the core vanilla JavaScript example or the Angular integration.
+        </p>
+
+        <div class="cards">
+          <article class="card">
+            <div class="card-icon">🚀</div>
+            <h3 class="card-title">Core Example</h3>
+            <span class="card-package">@pliant/core</span>
+            <p class="card-desc">
+              Pure JavaScript validation with no framework dependencies. See the complete API in action.
+            </p>
+            <ul class="card-features">
+              <li><span class="check">✓</span> Registry-based rule management</li>
+              <li><span class="check">✓</span> Rule inheritance & composition</li>
+              <li><span class="check">✓</span> Dynamic message resolution</li>
+              <li><span class="check">✓</span> Structured error details</li>
+              <li><span class="check">✓</span> 11 built-in validators</li>
+            </ul>
+            <a href="./examples/core/" class="card-btn">View Core Demo →</a>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">🅰️</div>
+            <h3 class="card-title">Angular Example</h3>
+            <span class="card-package">@pliant/angular</span>
+            <p class="card-desc">
+              Seamless Angular Reactive Forms integration with dependency injection support.
+            </p>
+            <ul class="card-features">
+              <li><span class="check">✓</span> ValidatorFn integration</li>
+              <li><span class="check">✓</span> DI-powered providers</li>
+              <li><span class="check">✓</span> Cross-field validation</li>
+              <li><span class="check">✓</span> Real-time error feedback</li>
+              <li><span class="check">✓</span> Standalone components</li>
+            </ul>
+            <a href="./examples/angular/" class="card-btn angular">View Angular Demo →</a>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Why Pliant?</h2>
+        <div class="features">
+          <div class="feature">
+            <div class="feature-icon">🧬</div>
+            <h3 class="feature-title">Rule Inheritance</h3>
+            <p class="feature-desc">
+              Create specialized rules from base rules. Override options, messages, or both without rewriting logic.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Structured Errors</h3>
+            <p class="feature-desc">
+              Get rich error objects with rule name, actual vs expected values, and full context for debugging.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🎨</div>
+            <h3 class="feature-title">Custom Messages</h3>
+            <p class="feature-desc">
+              Use static strings or dynamic functions that receive error details for context-aware messages.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🔌</div>
+            <h3 class="feature-title">Framework Adapters</h3>
+            <p class="feature-desc">
+              Same validation logic everywhere. Core for vanilla JS, adapters for Angular, React, and more.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-title">Async Support</h3>
+            <p class="feature-desc">
+              Built-in support for async validators. Perfect for server-side checks like username availability.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🪶</div>
+            <h3 class="feature-title">Lightweight</h3>
+            <p class="feature-desc">
+              Zero runtime dependencies. Tree-shakeable ESM builds. Import only what you use.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <p>
+        Released under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+        <br />
+        Built by <a href="https://github.com/PortableSheep">Michael Gunderson</a>
+      </p>
+    </footer>
+  </body>
+</html>

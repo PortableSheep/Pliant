@@ -15,7 +15,7 @@ import {
   equalsRule,
   applyMessages,
   createMessageResolver
-} from "/packages/pliant-core/dist-esm/pliant-core.bundle.js";
+} from "../../packages/pliant-core/dist-esm/pliant-core.bundle.js";
 
 // Create the registry
 const registry = createRegistry();

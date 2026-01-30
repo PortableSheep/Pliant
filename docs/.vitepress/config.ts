@@ -4,6 +4,9 @@ export default defineConfig({
   title: "Pliant",
   description: "A modern, framework-agnostic validation library with structured errors and rule inheritance",
   
+  // For GitHub Pages deployment - docs are under /Pliant/docs/
+  base: '/Pliant/docs/',
+  
   head: [
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
@@ -100,7 +103,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/yourname/pliant' }
+      { icon: 'github', link: 'https://github.com/PortableSheep/Pliant' }
     ],
 
     footer: {
