@@ -133,7 +133,7 @@ The following are NOT empty (with default options):
 - Non-empty strings
 - Non-empty arrays
 - `true` (boolean)
-- Non-empty objects `{}`
+- Objects (including empty objects like `{}`)
 
 ## Messages
 
