@@ -148,11 +148,11 @@ The following are considered empty:
 - `'   '` (whitespace only, when `trim: true`)
 - `[]` (empty array)
 - `false` (boolean, unless `allowFalse: true`)
-- `0` (number zero, unless `allowZero: false`)
+- `0` (number zero, when `allowZero: false`)
 
 The following are NOT empty:
 
-- `0` (number zero, by default since `allowZero: true`)
+- `0` (number zero, by default since `allowZero` defaults to `true`)
 - `false` (boolean, when `allowFalse: true`)
 - `{}` (empty object)
 - Non-empty arrays
