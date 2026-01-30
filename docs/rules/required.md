@@ -18,7 +18,9 @@ function requiredRule(options?: RequiredRuleOptions): RuleDef
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `trimWhitespace` | `boolean` | `true` | Treat whitespace-only strings as empty |
+| `trim` | `boolean` | `true` | Trim whitespace from strings before checking if empty |
+| `allowFalse` | `boolean` | `false` | Allow `false` boolean value as valid (not empty) |
+| `allowZero` | `boolean` | `true` | Allow `0` number value as valid (not empty) |
 
 ## Error Detail
 
@@ -57,24 +59,60 @@ evaluateRules(registry, 'John', { field: 'name' }, ['required']);
 
 ### Whitespace Handling
 
-By default, whitespace-only strings are considered empty:
+By default, whitespace is trimmed from strings before checking if empty:
 
 ```ts
-// Default behavior (trimWhitespace: true)
+// Default behavior (trim: true)
 addRules(registry, {
-  required: requiredRule() // or requiredRule({ trimWhitespace: true })
+  required: requiredRule() // or requiredRule({ trim: true })
 });
 
 evaluateRules(registry, '   ', { field: 'name' }, ['required']);
 // { required: { code: 'required' } }
 
-// Allow whitespace-only values
+// Don't trim whitespace
 addRules(registry, {
-  required: requiredRule({ trimWhitespace: false })
+  required: requiredRule({ trim: false })
 });
 
 evaluateRules(registry, '   ', { field: 'name' }, ['required']);
+// null (passes - whitespace is present)
+```
+
+### Boolean Values
+
+By default, `false` is treated as empty:
+
+```ts
+// Default behavior (allowFalse: false)
+evaluateRules(registry, false, { field: 'agreed' }, ['required']);
+// { required: { code: 'required' } }
+
+// Allow false as valid
+addRules(registry, {
+  required: requiredRule({ allowFalse: true })
+});
+
+evaluateRules(registry, false, { field: 'agreed' }, ['required']);
 // null (passes)
+```
+
+### Numeric Zero
+
+By default, `0` is allowed as valid:
+
+```ts
+// Default behavior (allowZero: true)
+evaluateRules(registry, 0, { field: 'count' }, ['required']);
+// null (passes)
+
+// Treat zero as empty
+addRules(registry, {
+  required: requiredRule({ allowZero: false })
+});
+
+evaluateRules(registry, 0, { field: 'count' }, ['required']);
+// { required: { code: 'required' } }
 ```
 
 ## Empty Values
@@ -84,14 +122,18 @@ The following are considered empty:
 - `null`
 - `undefined`
 - `''` (empty string)
-- `'   '` (whitespace only, when `trimWhitespace: true`)
-
-The following are NOT empty:
-
-- `0` (number zero)
-- `false` (boolean)
+- `'   '` (whitespace only, when `trim: true`)
 - `[]` (empty array)
-- `{}` (empty object)
+- `false` (boolean, when `allowFalse: false`)
+- `0` (number, when `allowZero: false`)
+
+The following are NOT empty (with default options):
+
+- `0` (number zero, since `allowZero: true` by default)
+- Non-empty strings
+- Non-empty arrays
+- `true` (boolean)
+- Non-empty objects `{}`
 
 ## Messages
 
