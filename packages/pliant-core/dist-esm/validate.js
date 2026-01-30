@@ -24,19 +24,26 @@ export const evaluateRule = (registry, value, ctx, ref) => {
     return applyMessage(detail, ctx, message);
 };
 export const evaluateRules = (registry, value, ctx, rules) => {
+    // Normalize to array
+    const ruleArray = (Array.isArray(rules) ? rules : [rules]);
     const errors = {};
-    for (const ref of rules) {
+    // Short-circuit: stop at first error
+    for (const ref of ruleArray) {
         const detail = evaluateRule(registry, value, ctx, ref);
         if (detail) {
             errors[detail.code] = detail;
+            break; // Short-circuit on first error
         }
     }
     return Object.keys(errors).length > 0 ? errors : null;
 };
 export const evaluateRulesAsync = async (registry, value, ctx, rules) => {
     var _a, _b, _c, _d;
+    // Normalize to array
+    const ruleArray = (Array.isArray(rules) ? rules : [rules]);
     const errors = {};
-    for (const ref of rules) {
+    // Short-circuit: stop at first error
+    for (const ref of ruleArray) {
         const resolved = resolveRuleRef(registry, ref);
         if (resolved.enabled === false)
             continue;
@@ -46,6 +53,7 @@ export const evaluateRulesAsync = async (registry, value, ctx, rules) => {
                 const detail = createErrorDetail(resolved.name, result);
                 const message = (_b = resolved.messageOverride) !== null && _b !== void 0 ? _b : resolved.message;
                 errors[detail.code] = applyMessage(detail, ctx, message);
+                break; // Short-circuit on first error
             }
         }
         else {
@@ -54,6 +62,7 @@ export const evaluateRulesAsync = async (registry, value, ctx, rules) => {
                 const detail = createErrorDetail(resolved.name, result);
                 const message = (_d = resolved.messageOverride) !== null && _d !== void 0 ? _d : resolved.message;
                 errors[detail.code] = applyMessage(detail, ctx, message);
+                break; // Short-circuit on first error
             }
         }
     }

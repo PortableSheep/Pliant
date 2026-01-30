@@ -47,14 +47,19 @@ export const evaluateRules = (
   registry: Registry,
   value: unknown,
   ctx: RuleContext,
-  rules: RuleRef[]
+  rules: string | string[] | RuleRef | RuleRef[]
 ): Record<string, PliantErrorDetail> | null => {
+  // Normalize to array
+  const ruleArray = (Array.isArray(rules) ? rules : [rules]) as RuleRef[];
+  
   const errors: Record<string, PliantErrorDetail> = {};
 
-  for (const ref of rules) {
+  // Short-circuit: stop at first error
+  for (const ref of ruleArray) {
     const detail = evaluateRule(registry, value, ctx, ref);
     if (detail) {
       errors[detail.code] = detail;
+      break; // Short-circuit on first error
     }
   }
 
@@ -65,11 +70,15 @@ export const evaluateRulesAsync = async (
   registry: Registry,
   value: unknown,
   ctx: RuleContext,
-  rules: RuleRef[]
+  rules: string | string[] | RuleRef | RuleRef[]
 ): Promise<Record<string, PliantErrorDetail> | null> => {
+  // Normalize to array
+  const ruleArray = (Array.isArray(rules) ? rules : [rules]) as RuleRef[];
+  
   const errors: Record<string, PliantErrorDetail> = {};
 
-  for (const ref of rules) {
+  // Short-circuit: stop at first error
+  for (const ref of ruleArray) {
     const resolved = resolveRuleRef(registry, ref);
     if (resolved.enabled === false) continue;
 
@@ -79,6 +88,7 @@ export const evaluateRulesAsync = async (
         const detail = createErrorDetail(resolved.name, result);
         const message = resolved.messageOverride ?? resolved.message;
         errors[detail.code] = applyMessage(detail, ctx, message);
+        break; // Short-circuit on first error
       }
     } else {
       const result = resolved.validate(value, ctx, resolved.options ?? {});
@@ -86,6 +96,7 @@ export const evaluateRulesAsync = async (
         const detail = createErrorDetail(resolved.name, result);
         const message = resolved.messageOverride ?? resolved.message;
         errors[detail.code] = applyMessage(detail, ctx, message);
+        break; // Short-circuit on first error
       }
     }
   }
