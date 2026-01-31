@@ -1,0 +1,9 @@
+{
+  "name": "pliant-core-example",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "build:core": "npm --prefix ../../packages/pliant-core run build",
+    "start": "node server.mjs"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "pliant-angular-example",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "start": "npm --prefix ../../packages/pliant-core run build && npm --prefix ../../packages/pliant-angular run build && ng serve",
+    "build": "ng build"
+  },
+  "dependencies": {
+    "@angular/common": "^17.3.0",
+    "@angular/core": "^17.3.0",
+    "@angular/forms": "^17.3.0",
+    "@angular/platform-browser": "^17.3.0",
+    "@pliant/angular": "file:../../packages/pliant-angular",
+    "@pliant/core": "file:../../packages/pliant-core",
+    "rxjs": "^7.8.1",
+    "zone.js": "^0.14.4"
+  },
+  "devDependencies": {
+    "@angular/cli": "^17.3.0",
+    "@angular-devkit/build-angular": "^17.3.0",
+    "typescript": "^5.4.5"
+  }
+}

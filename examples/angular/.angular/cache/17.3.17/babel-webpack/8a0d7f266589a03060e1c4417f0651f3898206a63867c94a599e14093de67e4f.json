@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { inheritRule } from \"../helpers\";\nexport const minLengthRule = defaults => inheritRule(\"length\", {\n  options: {\n    min: defaults.min\n  },\n  message: \"Too short\"\n});","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

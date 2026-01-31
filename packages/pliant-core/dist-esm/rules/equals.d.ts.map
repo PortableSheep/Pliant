@@ -1,0 +1,1 @@
+{"version":3,"file":"equals.d.ts","sourceRoot":"","sources":["../../src/rules/equals.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,UAAU,CAAC;AAEnC,MAAM,WAAW,aAAa;IAC5B,KAAK,CAAC,EAAE,MAAM,CAAC;IACf,KAAK,CAAC,EAAE,OAAO,CAAC;IAChB,MAAM,CAAC,EAAE,OAAO,CAAC;CAClB;AAED,eAAO,MAAM,UAAU,cAAc,aAAa,KAAQ,QAAQ,aAAa,CAY7E,CAAC"}
