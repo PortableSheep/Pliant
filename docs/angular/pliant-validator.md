@@ -226,6 +226,5 @@ addEmail() {
 
 ## See Also
 
-- [Async Validation](/angular/async) — Server-side validation
-- [Group Validation](/angular/group-validation) — Cross-field validation
+- [Async Rules](/rules/async) — Server-side validation
 - [Setup](/angular/setup) — Configuration

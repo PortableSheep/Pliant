@@ -171,4 +171,4 @@ const errors = evaluateRules(registry, '123', ctx, ['phone']);
 
 - [createRegistry()](/core/create-registry) — Create a registry
 - [addRules()](/core/add-rules) — Register rules
-- [applyMessages()](/core/apply-messages) — Add messages to errors
+- [Message Resolution](/core/messages) — Add messages to errors

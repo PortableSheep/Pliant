@@ -310,4 +310,4 @@ const messages = createMessageResolver({
 ## See Also
 
 - [Custom Rules](/rules/custom) — Sync custom rules
-- [Angular Async Validation](/angular/async) — Framework integration
+- [Angular Integration](/angular/index) — Framework integration

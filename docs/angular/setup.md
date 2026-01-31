@@ -253,6 +253,5 @@ describe('FormComponent', () => {
 
 ## See Also
 
-- [providePliantRules](/angular/provide-rules) — Rule provider details
-- [providePliantMessages](/angular/provide-messages) — Message provider details
 - [pliant() Validator](/angular/pliant-validator) — Using validators
+- [Message Resolution](/core/messages) — Message configuration details

@@ -106,8 +106,5 @@ export class LoginComponent {
 ## Pages
 
 - [Setup](/angular/setup) — Configuration and providers
-- [providePliantRules](/angular/provide-rules) — Rule provider
-- [providePliantMessages](/angular/provide-messages) — Message provider  
 - [pliant() Validator](/angular/pliant-validator) — Reactive form validator
-- [Async Validation](/angular/async) — Server-side validation
-- [Group Validation](/angular/group-validation) — Cross-field validation
+- [Async Rules](/rules/async) — Server-side validation
