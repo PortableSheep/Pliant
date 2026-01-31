@@ -5,9 +5,9 @@ export type RuleOverrides = Partial<RuleDef>;
 export declare const resolveRule: (registry: Registry, name: string, overrides?: RuleOverrides) => ResolvedRuleDef;
 export declare const toRuleRef: (ref: RuleRef) => {
     name: string;
-    options?: Record<string, unknown> | undefined;
-    message?: string | MessageBuilder | undefined;
-    enabled?: boolean | undefined;
+    options?: Record<string, unknown>;
+    message?: string | MessageBuilder;
+    enabled?: boolean;
 };
 export declare const resolveRuleRef: (registry: Registry, ref: RuleRef) => ResolvedRuleDef & {
     messageOverride?: string | MessageBuilder;

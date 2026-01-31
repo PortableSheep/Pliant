@@ -102,19 +102,22 @@ var evaluateRule = (registry, value, ctx, ref) => {
   return applyMessage(detail, ctx, message);
 };
 var evaluateRules = (registry, value, ctx, rules) => {
+  const ruleArray = Array.isArray(rules) ? rules : [rules];
   const errors = {};
-  for (const ref of rules) {
+  for (const ref of ruleArray) {
     const detail = evaluateRule(registry, value, ctx, ref);
     if (detail) {
       errors[detail.code] = detail;
+      break;
     }
   }
   return Object.keys(errors).length > 0 ? errors : null;
 };
 var evaluateRulesAsync = async (registry, value, ctx, rules) => {
   var _a, _b, _c, _d;
+  const ruleArray = Array.isArray(rules) ? rules : [rules];
   const errors = {};
-  for (const ref of rules) {
+  for (const ref of ruleArray) {
     const resolved = resolveRuleRef(registry, ref);
     if (resolved.enabled === false)
       continue;
@@ -124,6 +127,7 @@ var evaluateRulesAsync = async (registry, value, ctx, rules) => {
         const detail = createErrorDetail(resolved.name, result);
         const message = (_b = resolved.messageOverride) !== null && _b !== void 0 ? _b : resolved.message;
         errors[detail.code] = applyMessage(detail, ctx, message);
+        break;
       }
     } else {
       const result = resolved.validate(value, ctx, (_c = resolved.options) !== null && _c !== void 0 ? _c : {});
@@ -131,6 +135,7 @@ var evaluateRulesAsync = async (registry, value, ctx, rules) => {
         const detail = createErrorDetail(resolved.name, result);
         const message = (_d = resolved.messageOverride) !== null && _d !== void 0 ? _d : resolved.message;
         errors[detail.code] = applyMessage(detail, ctx, message);
+        break;
       }
     }
   }
