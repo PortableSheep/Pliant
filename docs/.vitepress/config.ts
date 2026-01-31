@@ -24,8 +24,8 @@ export default defineConfig({
       {
         text: 'Examples',
         items: [
-          { text: 'Core Example', link: '/examples/core' },
-          { text: 'Angular Example', link: '/examples/angular' }
+          { text: 'Core Example', link: '../examples/core/' },
+          { text: 'Angular Example', link: '../examples/angular/' }
         ]
       }
     ],
