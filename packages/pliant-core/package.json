@@ -29,6 +29,6 @@
     "bundle": "esbuild dist-esm/index.js --bundle --format=esm --outfile=dist-esm/pliant-core.bundle.js"
   },
   "devDependencies": {
-    "esbuild": "^0.27.2"
+    "esbuild": "^0.28.1"
   }
 }
